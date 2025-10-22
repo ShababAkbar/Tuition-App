@@ -17,6 +17,10 @@ export interface Tuition {
   location: string;
   timing: string;
   fee: string;
+  city: string;
+  tuition_type: string;
+  tuition_code: string;
+  tutor_id: string | null;
   created_at: string;
 }
 
