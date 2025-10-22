@@ -1,0 +1,42 @@
+Tuition App Project Structure
+=============================
+
+Root Directory: c:\Users\Shabab\Documents\Tuition App
+
+Configuration Files:
+- eslint.config.js
+- index.html
+- package.json
+- postcss.config.js
+- tailwind.config.js
+- tsconfig.app.json
+- tsconfig.json
+- tsconfig.node.json
+- vite.config.ts
+
+src/
+├── App.tsx
+├── index.css
+├── main.tsx
+├── vite-env.d.ts
+├── components/
+│   ├── Navbar.tsx
+│   └── TuitionCard.tsx
+├── lib/
+│   └── supabase.ts
+└── pages/
+    ├── Home.tsx
+    ├── Profile.tsx
+    └── TuitionDetails.tsx
+
+supabase/
+└── migrations/
+    └── 20251021043837_create_tutor_tuition_tables.sql
+
+Project Summary:
+- Frontend: React + TypeScript + Vite
+- Styling: Tailwind CSS
+- Database: Supabase
+- Main Components: Navbar, TuitionCard
+- Pages: Home, Profile, TuitionDetails
+- Database Tables: tutor, tuition (with RLS policies)
