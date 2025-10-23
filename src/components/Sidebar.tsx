@@ -1,9 +1,12 @@
-import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, BookOpen, Briefcase, ChevronLeft, ChevronRight, GraduationCap } from 'lucide-react';
+import { Home, BookOpen, Briefcase, ChevronLeft, ChevronRight } from 'lucide-react';
 
-export default function Sidebar() {
-  const [isExpanded, setIsExpanded] = useState(true);
+interface SidebarProps {
+  isExpanded: boolean;
+  setIsExpanded: (expanded: boolean) => void;
+}
+
+export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
   const location = useLocation();
 
   const isActive = (path: string) => location.pathname === path;
@@ -16,28 +19,14 @@ export default function Sidebar() {
 
   return (
     <div
-      className={`bg-white shadow-lg h-screen fixed left-0 top-0 transition-all duration-300 z-50 ${
+      className={`bg-white shadow-lg fixed left-0 top-16 bottom-0 transition-all duration-300 z-40 ${
         isExpanded ? 'w-64' : 'w-20'
       }`}
     >
       <div className="flex flex-col h-full">
-        <div className="flex items-center justify-between p-4 border-b border-gray-200">
-          {isExpanded && (
-            <Link to="/" className="flex items-center space-x-2">
-              <GraduationCap className="w-8 h-8 text-blue-600" />
-              <span className="text-xl font-bold text-gray-900">TutorHub</span>
-            </Link>
-          )}
-          {!isExpanded && (
-            <Link to="/" className="flex items-center justify-center w-full">
-              <GraduationCap className="w-8 h-8 text-blue-600" />
-            </Link>
-          )}
-        </div>
-
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="absolute -right-3 top-20 bg-blue-600 text-white rounded-full p-1.5 shadow-lg hover:bg-blue-700 transition-colors"
+          className="absolute -right-3 top-4 bg-blue-600 text-white rounded-full p-1.5 shadow-lg hover:bg-blue-700 transition-colors"
         >
           {isExpanded ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
         </button>
