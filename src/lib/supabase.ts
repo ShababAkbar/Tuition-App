@@ -29,6 +29,12 @@ export interface Tutor {
   name: string;
   email: string;
   phone: string;
+  profile_picture?: string;
+  address?: string;
+  subjects: string[];
+  mode_of_tuition: string;
+  city?: string;
+  biography?: string;
   created_at: string;
   updated_at: string;
 }
