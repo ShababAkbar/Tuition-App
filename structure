@@ -19,24 +19,56 @@ src/
 ├── index.css
 ├── main.tsx
 ├── vite-env.d.ts
+├── assets/
+│   └── hero-illustration.png
 ├── components/
 │   ├── Navbar.tsx
-│   └── TuitionCard.tsx
+│   ├── Sidebar.tsx
+│   ├── TuitionCard.tsx
+│   ├── TuitionListItem.tsx
+│   ├── landing/
+│   │   ├── LandingFooter.tsx
+│   │   ├── LandingHero.tsx
+│   │   ├── LandingNavbar.tsx
+│   │   ├── LandingReviews.tsx
+│   │   ├── LandingServices.tsx
+│   │   └── LandingStats.tsx
+│   └── ui/
+│       ├── button.tsx
+│       └── card.tsx
 ├── lib/
-│   └── supabase.ts
+│   ├── supabase.ts
+│   └── utils.ts
 └── pages/
+    ├── AllTuitions.tsx
+    ├── Dashboard.tsx
     ├── Home.tsx
+    ├── Landing.tsx
+    ├── MyTuitions.tsx
     ├── Profile.tsx
     └── TuitionDetails.tsx
 
 supabase/
 └── migrations/
-    └── 20251021043837_create_tutor_tuition_tables.sql
+    ├── 20251021043837_create_tutor_tuition_tables.sql
+    ├── 20251022104550_add_tuition_assignments.sql
+    └── 20251028000000_add_app_stats.sql
 
 Project Summary:
 - Frontend: React + TypeScript + Vite
-- Styling: Tailwind CSS
+- Styling: Tailwind CSS + shadcn/ui components
 - Database: Supabase
-- Main Components: Navbar, TuitionCard
-- Pages: Home, Profile, TuitionDetails
-- Database Tables: tutor, tuition (with RLS policies)
+- Landing Page: Full featured landing page with hero, stats, services, reviews
+- Main Components: Navbar, Sidebar, TuitionCard, TuitionListItem
+- Landing Components: LandingNavbar, LandingHero, LandingStats, LandingServices, LandingReviews, LandingFooter
+- Pages: Landing (default), Dashboard, AllTuitions, MyTuitions, Profile, TuitionDetails
+- Database Tables: tutor, tuition, app_stats (with RLS policies)
+- Real-time Stats: Fetches tutor and student counts from database
+
+Routing:
+- "/" -> Landing page (first screen)
+- "/dashboard" -> Tutor dashboard (with sidebar/navbar)
+- "/tuitions" -> All tuitions list
+- "/my-tuitions" -> My tuitions
+- "/profile" -> Tutor profile
+- Logo click -> Always returns to landing page

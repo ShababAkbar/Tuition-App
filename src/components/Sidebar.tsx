@@ -12,7 +12,7 @@ export default function Sidebar({ isExpanded, setIsExpanded }: SidebarProps) {
   const isActive = (path: string) => location.pathname === path;
 
   const menuItems = [
-    { path: '/', icon: Home, label: 'Home' },
+    { path: '/dashboard', icon: Home, label: 'Home' },
     { path: '/my-tuitions', icon: Briefcase, label: 'My Tuitions' },
     { path: '/tuitions', icon: BookOpen, label: 'Tuitions' },
   ];
