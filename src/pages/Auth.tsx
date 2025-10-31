@@ -38,7 +38,7 @@ const Auth = () => {
             navigate("/dashboard");
           }
         } else {
-          navigate("/tuitions");
+          navigate("/tuition-request");
         }
       }
     };
@@ -50,7 +50,7 @@ const Auth = () => {
     setLoading(true);
 
     try {
-      const { data, error } = await supabase.auth.signUp({
+      const { error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -72,7 +72,7 @@ const Auth = () => {
       if (userType === "tutor") {
         navigate("/tutor-onboarding");
       } else {
-        navigate("/tuitions");
+        navigate("/tuition-request");
       }
     } catch (error: any) {
       toast({
@@ -116,7 +116,7 @@ const Auth = () => {
           navigate("/dashboard");
         }
       } else {
-        navigate("/tuitions");
+        navigate("/tuition-request");
       }
     } catch (error: any) {
       toast({
