@@ -29,14 +29,14 @@ const LandingHero = () => {
             <div className="flex flex-wrap gap-4">
               <button 
                 className="group inline-flex items-center justify-center rounded-lg bg-blue-600 px-6 py-3 text-base font-medium text-white hover:bg-blue-700 transition-colors"
-                onClick={() => navigate('/tuitions')}
+                onClick={() => navigate('/auth?type=parent')}
               >
                 For Parents
                 <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
               </button>
               <button 
                 className="inline-flex items-center justify-center rounded-lg bg-gray-200 px-6 py-3 text-base font-medium text-gray-900 hover:bg-gray-300 transition-colors"
-                onClick={() => navigate('/profile')}
+                onClick={() => navigate('/auth?type=tutor')}
               >
                 For Tutors
               </button>

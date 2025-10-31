@@ -3,11 +3,14 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
 import Landing from './pages/Landing';
+import Auth from './pages/Auth';
+import TutorOnboarding from './pages/TutorOnboarding';
 import Dashboard from './pages/Dashboard';
 import AllTuitions from './pages/AllTuitions';
 import MyTuitions from './pages/MyTuitions';
 import TuitionDetails from './pages/TuitionDetails';
 import Profile from './pages/Profile';
+import { Toaster } from './components/ui/toaster';
 
 function App() {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
@@ -17,6 +20,12 @@ function App() {
       <Routes>
         {/* Landing Page - No sidebar/navbar */}
         <Route path="/" element={<Landing />} />
+        
+        {/* Auth Page - No sidebar/navbar */}
+        <Route path="/auth" element={<Auth />} />
+        
+        {/* Tutor Onboarding Page - No sidebar/navbar */}
+        <Route path="/tutor-onboarding" element={<TutorOnboarding />} />
         
         {/* Dashboard routes with sidebar and navbar */}
         <Route path="/*" element={
@@ -37,6 +46,7 @@ function App() {
           </div>
         } />
       </Routes>
+      <Toaster />
     </BrowserRouter>
   );
 }
