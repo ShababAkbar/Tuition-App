@@ -22,10 +22,16 @@ export default function MyTuitions() {
     try {
       setLoading(true);
 
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+
       const { data: tutorData } = await supabase
-        .from('tutor')
+        .from('tutors')
         .select('id')
-        .limit(1)
+        .eq('user_id', user.id)
         .maybeSingle();
 
       if (!tutorData) {

@@ -25,7 +25,7 @@ const LandingStats = () => {
     try {
       // Fetch real tutor count
       const { count: tutorCount } = await supabase
-        .from('tutor')
+        .from('tutors')
         .select('*', { count: 'exact', head: true });
 
       // Fetch real tuition/student count

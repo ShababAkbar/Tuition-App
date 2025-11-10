@@ -7,6 +7,8 @@ import TuitionCard from '../components/TuitionCard';
 export default function Dashboard() {
   const navigate = useNavigate();
   const [tutor, setTutor] = useState<Tutor | null>(null);
+  const [tutorProfile, setTutorProfile] = useState<any>(null);
+  const [profileStatus, setProfileStatus] = useState<'incomplete' | 'pending' | 'approved' | 'rejected'>('incomplete');
   const [latestTuitions, setLatestTuitions] = useState<Tuition[]>([]);
   const [myTuitionsCount, setMyTuitionsCount] = useState(0);
   const [allTuitionsCount, setAllTuitionsCount] = useState(0);
@@ -20,19 +22,51 @@ export default function Dashboard() {
     try {
       setLoading(true);
 
-      const [tutorResult, latestResult, allCountResult] = await Promise.all([
-        supabase.from('tutor').select('*').limit(1).maybeSingle(),
+      // Get current user
+      const { data } = await supabase.auth.getSession();
+      const user = data.session?.user;
+      
+      if (!user) {
+        navigate('/auth?type=tutor');
+        return;
+      }
+
+      // Check new_tutor table (pending applications)
+      const { data: tutorProfileData } = await supabase
+        .from('new_tutor')
+        .select('*')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      setTutorProfile(tutorProfileData);
+
+      if (!tutorProfileData) {
+        setProfileStatus('incomplete');
+      } else {
+        setProfileStatus(tutorProfileData.status);
+        
+        // If approved, also check tutors table
+        if (tutorProfileData.status === 'approved') {
+          const { data: tutorData } = await supabase
+            .from('tutors')
+            .select('*')
+            .eq('user_id', user.id)
+            .maybeSingle();
+          
+          setTutor(tutorData);
+        }
+      }
+
+      const [latestResult, allCountResult] = await Promise.all([
         supabase.from('tuition').select('*').order('created_at', { ascending: false }).limit(4),
         supabase.from('tuition').select('id', { count: 'exact', head: true }),
       ]);
 
-      if (tutorResult.data) {
-        setTutor(tutorResult.data);
-
+      if (tutor) {
         const myTuitionsResult = await supabase
           .from('tuition')
           .select('id', { count: 'exact', head: true })
-          .eq('tutor_id', tutorResult.data.id);
+          .eq('tutor_id', tutor.id);
 
         setMyTuitionsCount(myTuitionsResult.count || 0);
       }
@@ -60,9 +94,60 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
+        {/* Profile Status Banner */}
+        {profileStatus === 'incomplete' && (
+          <div className="mb-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4 flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="bg-yellow-100 rounded-full p-2">
+                <GraduationCap className="w-6 h-6 text-yellow-600" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-yellow-900">Complete Your Profile</h3>
+                <p className="text-sm text-yellow-700">
+                  Complete your profile to start applying for tuitions
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => navigate('/tutor-onboarding')}
+              className="bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-2 rounded-lg font-medium transition-colors"
+            >
+              Complete Now
+            </button>
+          </div>
+        )}
+
+        {profileStatus === 'pending' && (
+          <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-center space-x-3">
+            <div className="bg-blue-100 rounded-full p-2">
+              <GraduationCap className="w-6 h-6 text-blue-600" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-blue-900">Profile Under Review</h3>
+              <p className="text-sm text-blue-700">
+                Your profile is pending approval. You can browse tuitions but cannot apply yet.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {profileStatus === 'rejected' && (
+          <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4 flex items-center space-x-3">
+            <div className="bg-red-100 rounded-full p-2">
+              <GraduationCap className="w-6 h-6 text-red-600" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-red-900">Profile Rejected</h3>
+              <p className="text-sm text-red-700">
+                Your profile was not approved. Please contact support for more information.
+              </p>
+            </div>
+          </div>
+        )}
+
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Welcome, {tutor?.name || 'Tutor'}
+            Welcome, {tutorProfile?.first_name || tutor?.name || 'Tutor'}
           </h1>
           <p className="text-gray-600">Here's what's happening with your tuitions today</p>
         </div>

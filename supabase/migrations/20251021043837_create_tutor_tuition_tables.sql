@@ -53,6 +53,12 @@ CREATE TABLE IF NOT EXISTS tuition (
 ALTER TABLE tutor ENABLE ROW LEVEL SECURITY;
 ALTER TABLE tuition ENABLE ROW LEVEL SECURITY;
 
+-- Drop existing policies if they exist
+DROP POLICY IF EXISTS "Anyone can view tuitions" ON tuition;
+DROP POLICY IF EXISTS "Anyone can view tutors" ON tutor;
+DROP POLICY IF EXISTS "Anyone can insert tutor profile" ON tutor;
+DROP POLICY IF EXISTS "Anyone can update tutor profile" ON tutor;
+
 -- Tuition policies: allow public read access
 CREATE POLICY "Anyone can view tuitions"
   ON tuition FOR SELECT

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Camera, Mail, Phone, MapPin, Edit2, Save, CheckCircle, AlertCircle, X, Plus } from 'lucide-react';
 import { supabase, Tutor } from '../lib/supabase';
 
@@ -10,6 +10,7 @@ const AVAILABLE_SUBJECTS = [
 ];
 
 export default function Profile() {
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -20,10 +21,12 @@ export default function Profile() {
     city: '',
     biography: '',
     profile_picture: '',
+    education: [] as any[],
   });
   const [existingTutor, setExistingTutor] = useState<Tutor | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showSubjectDropdown, setShowSubjectDropdown] = useState(false);
@@ -36,10 +39,19 @@ export default function Profile() {
   const fetchTutorProfile = async () => {
     try {
       setLoading(true);
+      
+      // Get current user
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        setError('User not authenticated');
+        return;
+      }
+
+      // Fetch from tutors table using user_id
       const { data, error } = await supabase
-        .from('tutor')
+        .from('tutors')
         .select('*')
-        .limit(1)
+        .eq('user_id', user.id)
         .maybeSingle();
 
       if (error) throw error;
@@ -47,19 +59,24 @@ export default function Profile() {
       if (data) {
         setExistingTutor(data);
         setFormData({
-          name: data.name,
-          email: data.email,
-          phone: data.phone,
+          name: `${data.first_name || ''} ${data.last_name || ''}`.trim() || data.name || '',
+          email: data.email || user.email || '',
+          phone: data.contact || data.phone || '',
           address: data.address || '',
           subjects: data.subjects || [],
           mode_of_tuition: data.mode_of_tuition || 'Both',
           city: data.city || '',
-          biography: data.biography || '',
+          biography: data.short_bio || data.biography || '',
           profile_picture: data.profile_picture || '',
+          education: data.education || [],
         });
+      } else {
+        // No profile yet, set email from auth
+        setFormData(prev => ({ ...prev, email: user.email || '' }));
       }
     } catch (err) {
       console.error('Error fetching tutor profile:', err);
+      setError('Failed to load profile');
     } finally {
       setLoading(false);
     }
@@ -108,6 +125,67 @@ export default function Profile() {
     });
   };
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      setError('Please upload an image file');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setError('Image size must be less than 5MB');
+      return;
+    }
+
+    try {
+      setUploading(true);
+      setError(null);
+
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('User not authenticated');
+
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}/profile_${Date.now()}.${fileExt}`;
+
+      // Upload to Supabase Storage
+      const { data, error: uploadError } = await supabase.storage
+        .from('tutor-documents')
+        .upload(fileName, file, {
+          upsert: true,
+          contentType: file.type,
+        });
+
+      if (uploadError) throw uploadError;
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('tutor-documents')
+        .getPublicUrl(fileName);
+
+      setFormData(prev => ({ ...prev, profile_picture: publicUrl }));
+      
+      // Auto-save the profile picture
+      if (existingTutor) {
+        await supabase
+          .from('tutors')
+          .update({ profile_picture: publicUrl })
+          .eq('user_id', user.id);
+      }
+
+      setSuccess(true);
+      setTimeout(() => setSuccess(false), 3000);
+    } catch (err) {
+      console.error('Upload error:', err);
+      setError(err instanceof Error ? err.message : 'Failed to upload image');
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const handlePasswordReset = async () => {
     if (!formData.email) {
       setError('Email address is required for password reset');
@@ -115,11 +193,37 @@ export default function Profile() {
     }
 
     try {
+      const { error } = await supabase.auth.resetPasswordForEmail(formData.email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      
+      if (error) throw error;
+      
       setPasswordResetSent(true);
       setTimeout(() => setPasswordResetSent(false), 5000);
     } catch (err) {
       setError('Failed to send password reset email');
     }
+  };
+
+  const handleEducationChange = (index: number, field: string, value: string) => {
+    const newEducation = [...formData.education];
+    newEducation[index] = { ...newEducation[index], [field]: value };
+    setFormData({ ...formData, education: newEducation });
+  };
+
+  const addEducation = () => {
+    setFormData({
+      ...formData,
+      education: [...formData.education, { degree: '', institution: '', year: '' }],
+    });
+  };
+
+  const removeEducation = (index: number) => {
+    setFormData({
+      ...formData,
+      education: formData.education.filter((_, i) => i !== index),
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -135,29 +239,31 @@ export default function Profile() {
       setError(null);
 
       const updateData = {
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
+        contact: formData.phone,
         address: formData.address,
         subjects: formData.subjects,
         mode_of_tuition: formData.mode_of_tuition,
         city: formData.city,
-        biography: formData.biography,
+        short_bio: formData.biography,
         profile_picture: formData.profile_picture,
+        education: formData.education,
         updated_at: new Date().toISOString(),
       };
 
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('User not authenticated');
+
       if (existingTutor) {
         const { error } = await supabase
-          .from('tutor')
+          .from('tutors')
           .update(updateData)
-          .eq('id', existingTutor.id);
+          .eq('user_id', user.id);
 
         if (error) throw error;
       } else {
         const { data, error } = await supabase
-          .from('tutor')
-          .insert([updateData])
+          .from('tutors')
+          .insert([{ ...updateData, user_id: user.id }])
           .select()
           .single();
 
@@ -203,8 +309,24 @@ export default function Profile() {
                     )}
                   </div>
                 </div>
-                <button className="absolute bottom-2 right-2 bg-blue-600 text-white p-2 rounded-full shadow-lg hover:bg-blue-700 transition-colors">
-                  <Edit2 className="w-4 h-4" />
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleImageUpload}
+                  accept="image/*"
+                  className="hidden"
+                />
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploading}
+                  className="absolute bottom-2 right-2 bg-blue-600 text-white p-2 rounded-full shadow-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400"
+                >
+                  {uploading ? (
+                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
+                  ) : (
+                    <Edit2 className="w-4 h-4" />
+                  )}
                 </button>
               </div>
             </div>
@@ -248,11 +370,11 @@ export default function Profile() {
                       type="text"
                       name="name"
                       value={formData.name}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                      placeholder="Enter your full name"
+                      readOnly
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 text-gray-600 cursor-not-allowed"
+                      placeholder="Your name from registration"
                     />
+                    <p className="text-xs text-gray-500 mt-1">Name cannot be edited here</p>
                   </div>
 
                   <div>
@@ -394,6 +516,57 @@ export default function Profile() {
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                       placeholder="Enter your city"
                     />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Education
+                    </label>
+                    <div className="space-y-3">
+                      {formData.education.map((edu, index) => (
+                        <div key={index} className="p-3 border border-gray-200 rounded-lg bg-gray-50">
+                          <div className="flex justify-between items-start mb-2">
+                            <span className="text-sm font-medium text-gray-700">Education {index + 1}</span>
+                            <button
+                              type="button"
+                              onClick={() => removeEducation(index)}
+                              className="text-red-500 hover:text-red-700"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </div>
+                          <input
+                            type="text"
+                            value={edu.degree || ''}
+                            onChange={(e) => handleEducationChange(index, 'degree', e.target.value)}
+                            placeholder="Degree (e.g., BS Computer Science)"
+                            className="w-full px-3 py-2 border border-gray-300 rounded mb-2 text-sm"
+                          />
+                          <input
+                            type="text"
+                            value={edu.institution || ''}
+                            onChange={(e) => handleEducationChange(index, 'institution', e.target.value)}
+                            placeholder="Institution"
+                            className="w-full px-3 py-2 border border-gray-300 rounded mb-2 text-sm"
+                          />
+                          <input
+                            type="text"
+                            value={edu.year || ''}
+                            onChange={(e) => handleEducationChange(index, 'year', e.target.value)}
+                            placeholder="Year (e.g., 2020)"
+                            className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+                          />
+                        </div>
+                      ))}
+                      <button
+                        type="button"
+                        onClick={addEducation}
+                        className="inline-flex items-center px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                      >
+                        <Plus className="w-4 h-4 mr-1" />
+                        Add Education
+                      </button>
+                    </div>
                   </div>
 
                   <div>

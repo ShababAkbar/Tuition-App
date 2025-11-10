@@ -2,11 +2,14 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, BookOpen, MapPin, Clock, DollarSign, User, Calendar } from 'lucide-react';
 import { supabase, Tuition } from '../lib/supabase';
+import { useToast } from '@/hooks/use-toast';
 
 export default function TuitionDetails() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [tuition, setTuition] = useState<Tuition | null>(null);
+  const [profileStatus, setProfileStatus] = useState<'incomplete' | 'pending' | 'approved' | 'rejected'>('incomplete');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -14,7 +17,34 @@ export default function TuitionDetails() {
     if (id) {
       fetchTuitionDetails(id);
     }
+    checkProfileStatus();
   }, [id]);
+
+  const checkProfileStatus = async () => {
+    try {
+      const { data } = await supabase.auth.getSession();
+      const user = data.session?.user;
+      
+      if (!user) {
+        setProfileStatus('incomplete');
+        return;
+      }
+
+      const { data: tutorProfile } = await supabase
+        .from('new_tutor')
+        .select('status')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (!tutorProfile) {
+        setProfileStatus('incomplete');
+      } else {
+        setProfileStatus(tutorProfile.status);
+      }
+    } catch (err) {
+      console.error('Error checking profile status:', err);
+    }
+  };
 
   const fetchTuitionDetails = async (tuitionId: string) => {
     try {
@@ -33,6 +63,43 @@ export default function TuitionDetails() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleApply = () => {
+    if (profileStatus === 'incomplete') {
+      toast({
+        title: 'Profile Incomplete',
+        description: 'Please complete your profile first before applying for tuitions.',
+        variant: 'destructive',
+      });
+      setTimeout(() => navigate('/tutor-onboarding'), 1500);
+      return;
+    }
+
+    if (profileStatus === 'pending') {
+      toast({
+        title: 'Profile Under Review',
+        description: 'Your profile is pending approval. You will be able to apply once it is approved.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (profileStatus === 'rejected') {
+      toast({
+        title: 'Profile Rejected',
+        description: 'Your profile was not approved. Please contact support for assistance.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    // If approved, proceed with application
+    toast({
+      title: 'Application Submitted!',
+      description: 'Your application for this tuition has been submitted successfully.',
+    });
+    // Add actual application logic here
   };
 
   if (loading) {
@@ -153,7 +220,7 @@ export default function TuitionDetails() {
 
             <div className="pt-6 border-t border-gray-200">
               <button
-                onClick={() => navigate('/profile')}
+                onClick={handleApply}
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors"
               >
                 Apply for This Tuition

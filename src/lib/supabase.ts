@@ -26,15 +26,28 @@ export interface Tuition {
 
 export interface Tutor {
   id: string;
-  name: string;
+  user_id: string;
+  first_name: string;
+  last_name: string;
+  father_name?: string;
   email: string;
-  phone: string;
-  profile_picture?: string;
-  address?: string;
+  contact: string;
+  other_contact?: string;
+  city: string;
+  state: string;
+  address: string;
+  postal_code: string;
+  cnic_front_url?: string;
+  cnic_back_url?: string;
+  education?: any[];
+  work_experience?: any[];
+  experience_years?: number;
   subjects: string[];
   mode_of_tuition: string;
-  city?: string;
-  biography?: string;
+  short_bio?: string;
+  detailed_description?: string;
+  profile_picture?: string;
+  status: string;
   created_at: string;
   updated_at: string;
 }

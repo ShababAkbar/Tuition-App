@@ -15,10 +15,16 @@ export default function TuitionListItem({ tuition, onUpdate }: TuitionListItemPr
     try {
       setApplying(true);
 
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        alert('Please login first');
+        return;
+      }
+
       const { data: tutorData } = await supabase
-        .from('tutor')
+        .from('tutors')
         .select('id')
-        .limit(1)
+        .eq('user_id', user.id)
         .maybeSingle();
 
       if (!tutorData) {
