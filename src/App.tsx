@@ -6,6 +6,7 @@ import Landing from './pages/Landing';
 import Auth from './pages/Auth';
 import TutorOnboarding from './pages/TutorOnboarding';
 import TuitionRequest from './pages/TuitionRequest';
+import TuitionRequestSuccess from './pages/TuitionRequestSuccess';
 import Dashboard from './pages/Dashboard';
 import AllTuitions from './pages/AllTuitions';
 import MyTuitions from './pages/MyTuitions';
@@ -30,6 +31,9 @@ function App() {
         
         {/* Tuition Request Page - No sidebar/navbar */}
         <Route path="/tuition-request" element={<TuitionRequest />} />
+        
+        {/* Tuition Request Success Page - No sidebar/navbar */}
+        <Route path="/tuition-request-success" element={<TuitionRequestSuccess />} />
         
         {/* Dashboard routes with sidebar and navbar */}
         <Route path="/*" element={

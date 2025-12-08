@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { PhoneInput } from "@/components/ui/phone-input";
 import { GraduationCap, MessageCircle } from "lucide-react";
 
 const TuitionRequest = () => {
@@ -25,6 +26,7 @@ const TuitionRequest = () => {
     school: "",
     board: "",
     modeOfTuition: "",
+    fee: "",
     additionalComments: "",
   });
 
@@ -34,7 +36,7 @@ const TuitionRequest = () => {
 
   const handleWhatsApp = () => {
     const message = encodeURIComponent(
-      `Hi, I'm looking for a tutor.\n\nName: ${formData.name || "Not provided"}\nPhone: ${formData.phone || "Not provided"}\nCity: ${formData.city || "Not provided"}\nClass: ${formData.class || "Not provided"}\nSubject: ${formData.subject || "Not provided"}`
+      `Hi, I'm looking for a tutor.\n\nName: ${formData.name || "Not provided"}\nPhone: ${formData.phone || "Not provided"}\nCity: ${formData.city || "Not provided"}\nClass: ${formData.class || "Not provided"}\nSubject: ${formData.subject || "Not provided"}\nFee Budget: ${formData.fee || "Not provided"}`
     );
     // Replace with your WhatsApp business number
     window.open(`https://wa.me/923001234567?text=${message}`, "_blank");
@@ -59,6 +61,7 @@ const TuitionRequest = () => {
         school: formData.school,
         board: formData.board,
         mode_of_tuition: formData.modeOfTuition,
+        fee: formData.fee,
         additional_comments: formData.additionalComments,
         status: "pending",
       });
@@ -70,7 +73,8 @@ const TuitionRequest = () => {
         description: "Your tuition request has been submitted. We'll connect you with a tutor shortly.",
       });
 
-      navigate("/tuitions");
+      // Redirect to success page (replaces history so back button works correctly)
+      navigate("/tuition-request-success", { replace: true });
     } catch (error: any) {
       toast({
         title: "Error",
@@ -142,20 +146,14 @@ const TuitionRequest = () => {
               {/* Phone */}
               <div className="space-y-2">
                 <Label htmlFor="phone">Phone Number *</Label>
-                <div className="flex">
-                  <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
-                    🇵🇰 +92
-                  </span>
-                  <Input
-                    id="phone"
-                    type="tel"
-                    placeholder="333-XXXXXXX"
-                    value={formData.phone}
-                    onChange={(e) => updateField("phone", e.target.value)}
-                    className="rounded-l-none"
-                    required
-                  />
-                </div>
+                <PhoneInput
+                  id="phone"
+                  value={formData.phone}
+                  onChange={(value) => updateField("phone", value)}
+                  defaultCountry="+92"
+                  placeholder="300-1234567"
+                  required
+                />
               </div>
 
               {/* Preferred Gender */}
@@ -260,6 +258,19 @@ const TuitionRequest = () => {
                   <option value="online">Online Tuition</option>
                   <option value="both">Both (Home & Online)</option>
                 </select>
+              </div>
+
+              {/* Fee Budget */}
+              <div className="space-y-2">
+                <Label htmlFor="fee">Fee Budget (per month) *</Label>
+                <Input
+                  id="fee"
+                  type="text"
+                  placeholder="e.g., 10,000 - 15,000 PKR"
+                  value={formData.fee}
+                  onChange={(e) => updateField("fee", e.target.value)}
+                  required
+                />
               </div>
 
               {/* Additional Comments */}

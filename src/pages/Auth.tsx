@@ -11,6 +11,22 @@ import { useToast } from "@/hooks/use-toast";
 import { GraduationCap } from "lucide-react";
 
 const Auth = () => {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const userType = searchParams.get("type") || "parent";
+
+  // If parent, redirect directly to tuition request form (no rendering)
+  useEffect(() => {
+    if (userType === "parent") {
+      navigate("/tuition-request", { replace: true });
+    }
+  }, [userType, navigate]);
+
+  // Don't render anything if it's a parent to avoid blinking
+  if (userType === "parent") {
+    return null;
+  }
+
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -18,19 +34,14 @@ const Auth = () => {
   const [phone, setPhone] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
   const { toast } = useToast();
-  const userType = searchParams.get("type") || "parent";
-
-  // Removed auto-redirect on session check to allow proper login/signup flow
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const { user } = await signUp({
+      await signUp({
         fullName,
         email,
         password,

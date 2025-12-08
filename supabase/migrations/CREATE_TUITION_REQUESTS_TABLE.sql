@@ -1,3 +1,6 @@
+-- Complete tuition_requests table creation with fee column
+-- Run this in Supabase Dashboard > SQL Editor
+
 -- Create tuition_requests table
 CREATE TABLE IF NOT EXISTS public.tuition_requests (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -78,3 +81,4 @@ CREATE TRIGGER update_tuition_requests_timestamp
 
 -- Add comment to the table
 COMMENT ON TABLE public.tuition_requests IS 'Stores tuition requests submitted by parents and students';
+COMMENT ON COLUMN public.tuition_requests.fee IS 'Fee budget or expected fee range per month';
