@@ -18,8 +18,7 @@ const TuitionRequestSuccess = () => {
   }, [navigate]);
 
   const handleWhatsApp = () => {
-    // Replace with your WhatsApp business number
-    window.open(`https://wa.me/923001234567`, "_blank");
+    window.open(`https://wa.me/923194394344`, "_blank");
   };
 
   const handleGoHome = () => {

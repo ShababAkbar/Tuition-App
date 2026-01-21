@@ -38,8 +38,7 @@ const TuitionRequest = () => {
     const message = encodeURIComponent(
       `Hi, I'm looking for a tutor.\n\nName: ${formData.name || "Not provided"}\nPhone: ${formData.phone || "Not provided"}\nCity: ${formData.city || "Not provided"}\nClass: ${formData.class || "Not provided"}\nSubject: ${formData.subject || "Not provided"}\nFee Budget: ${formData.fee || "Not provided"}`
     );
-    // Replace with your WhatsApp business number
-    window.open(`https://wa.me/923001234567?text=${message}`, "_blank");
+    window.open(`https://wa.me/923194394344?text=${message}`, "_blank");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
