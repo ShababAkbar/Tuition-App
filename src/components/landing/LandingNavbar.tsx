@@ -41,7 +41,7 @@ const LandingNavbar = () => {
             <Button 
               className="bg-blue-600 hover:bg-blue-700 text-white"
               size="lg"
-              onClick={() => navigate('/tuitions')}
+              onClick={() => navigate('/tuition-request')}
             >
               Find a Tutor
             </Button>
@@ -77,7 +77,7 @@ const LandingNavbar = () => {
               <Button 
                 className="bg-blue-600 hover:bg-blue-700 text-white w-full"
                 size="lg"
-                onClick={() => navigate('/tuitions')}
+                onClick={() => navigate('/tuition-request')}
               >
                 Find a Tutor
               </Button>
