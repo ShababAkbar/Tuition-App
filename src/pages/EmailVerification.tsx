@@ -37,13 +37,24 @@ const EmailVerification = () => {
     setIsResending(true);
     
     try {
+      console.log('Attempting to resend email to:', email);
+      
       // Resend confirmation email using Supabase
-      const { error } = await supabase.auth.resend({
+      const { data, error } = await supabase.auth.resend({
         type: 'signup',
         email: email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth?type=tutor`,
+        }
       });
 
+      console.log('Resend response:', { data, error });
+
       if (error) {
+        // Check if it's a rate limit error
+        if (error.message.includes('rate limit') || error.message.includes('Email rate limit exceeded')) {
+          throw new Error('Please wait a few minutes before requesting another email.');
+        }
         throw error;
       }
 
@@ -56,9 +67,10 @@ const EmailVerification = () => {
       setResendDisabled(true);
       setCountdown(60);
     } catch (error: any) {
+      console.error('Resend error:', error);
       toast({
         title: "Error",
-        description: error.message || "Failed to resend email. Please try again.",
+        description: error.message || "Failed to resend email. Please try again later.",
         variant: "destructive",
       });
     } finally {
