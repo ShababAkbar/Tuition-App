@@ -7,6 +7,7 @@ import Auth from './pages/Auth';
 import TutorOnboarding from './pages/TutorOnboarding';
 import TuitionRequest from './pages/TuitionRequest';
 import TuitionRequestSuccess from './pages/TuitionRequestSuccess';
+import EmailVerification from './pages/EmailVerification';
 import Dashboard from './pages/Dashboard';
 import AllTuitions from './pages/AllTuitions';
 import MyTuitions from './pages/MyTuitions';
@@ -25,6 +26,9 @@ function App() {
         
         {/* Auth Page - No sidebar/navbar */}
         <Route path="/auth" element={<Auth />} />
+        
+        {/* Email Verification Page - No sidebar/navbar */}
+        <Route path="/verify-email" element={<EmailVerification />} />
         
         {/* Tutor Onboarding Page - No sidebar/navbar */}
         <Route path="/tutor-onboarding" element={<TutorOnboarding />} />

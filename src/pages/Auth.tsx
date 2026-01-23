@@ -53,13 +53,11 @@ const Auth = () => {
 
       toast({
         title: "Success!",
-        description: "Your account has been created. Please check your email for verification.",
+        description: "Please check your email for verification.",
       });
 
-      setIsLogin(true);
-      setFullName("");
-      setPhone("");
-      setPassword("");
+      // Redirect to email verification page
+      navigate(`/verify-email?email=${encodeURIComponent(email)}`);
     } catch (error: any) {
       toast({
         title: "Error",
