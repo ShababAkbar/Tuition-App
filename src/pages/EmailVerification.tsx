@@ -3,13 +3,17 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { GraduationCap, Mail, CheckCircle, Clock } from "lucide-react";
+import { supabase } from "@/lib/supabase";
+import { useToast } from "@/hooks/use-toast";
 
 const EmailVerification = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const email = searchParams.get("email") || "";
   const [resendDisabled, setResendDisabled] = useState(false);
   const [countdown, setCountdown] = useState(0);
+  const [isResending, setIsResending] = useState(false);
 
   useEffect(() => {
     if (countdown > 0) {
@@ -20,11 +24,46 @@ const EmailVerification = () => {
     }
   }, [countdown]);
 
-  const handleResendEmail = () => {
-    // Placeholder for resend functionality
-    setResendDisabled(true);
-    setCountdown(60);
-    // TODO: Add actual resend logic here
+  const handleResendEmail = async () => {
+    if (!email) {
+      toast({
+        title: "Error",
+        description: "Email address not found. Please sign up again.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsResending(true);
+    
+    try {
+      // Resend confirmation email using Supabase
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: email,
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      toast({
+        title: "Email Sent!",
+        description: "Verification email has been resent. Please check your inbox.",
+      });
+
+      // Start countdown
+      setResendDisabled(true);
+      setCountdown(60);
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to resend email. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsResending(false);
+    }
   };
 
   return (
@@ -84,11 +123,11 @@ const EmailVerification = () => {
                 <Mail className="w-8 h-8 text-blue-600" />
               </div>
               <CardTitle className="text-2xl font-bold">Verify Your Email</CardTitle>
-              <CardDescription className="text-base">
+              <CardDescription className="text-gray-600">
                 We've sent a verification link to your email address
               </CardDescription>
             </CardHeader>
-
+            
             <CardContent className="space-y-6">
               {email && (
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
