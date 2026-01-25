@@ -3,19 +3,20 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
 interface StatsData {
-  totalTutors: number;
-  totalStudents: number;
+  totalTutors: string;
+  totalStudents: string;
   rating: string;
-  yearsOfLegacy: number;
+  legacy: string;
 }
 
 const LandingStats = () => {
   const [stats, setStats] = useState<StatsData>({
-    totalTutors: 3019,
-    totalStudents: 3000,
+    totalTutors: "3000+",
+    totalStudents: "5000+",
     rating: "4.5+",
-    yearsOfLegacy: 9,
+    legacy: "1 Month",
   });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchStats();
@@ -23,37 +24,40 @@ const LandingStats = () => {
 
   const fetchStats = async () => {
     try {
-      // Fetch real tutor count
-      const { count: tutorCount } = await supabase
-        .from('tutors')
-        .select('*', { count: 'exact', head: true });
+      // Fetch from dashboard_stats view
+      const { data, error } = await supabase
+        .from('dashboard_stats')
+        .select('*')
+        .single();
 
-      // Fetch real tuition/student count
-      const { count: studentCount } = await supabase
-        .from('tuition')
-        .select('*', { count: 'exact', head: true });
+      if (error) throw error;
 
-      setStats({
-        totalTutors: tutorCount || 3019,
-        totalStudents: studentCount || 3000,
-        rating: "4.5+",
-        yearsOfLegacy: 9,
-      });
+      if (data) {
+        setStats({
+          totalTutors: data.active_tutors + '+' || '0+',
+          totalStudents: data.happy_students || '0',
+          rating: data.rating + '+' || '4.5+',
+          legacy: data.legacy || '1 Month',
+        });
+      }
     } catch (error) {
       console.error('Error fetching stats:', error);
+      // Keep default values on error
+    } finally {
+      setLoading(false);
     }
   };
 
   const statsData = [
     {
       icon: Users,
-      value: stats.totalTutors.toString(),
-      label: "Total Active Tutors",
+      value: stats.totalTutors,
+      label: "Active Tutors",
     },
     {
       icon: TrendingUp,
-      value: `${stats.totalStudents}+`,
-      label: "Students Served",
+      value: stats.totalStudents,
+      label: "Happy Students",
     },
     {
       icon: Award,
@@ -62,7 +66,7 @@ const LandingStats = () => {
     },
     {
       icon: Clock,
-      value: `${stats.yearsOfLegacy}+`,
+      value: stats.legacy,
       label: "Years Of Legacy",
     },
   ];

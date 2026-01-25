@@ -4,10 +4,16 @@ import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
 import Landing from './pages/Landing';
 import Auth from './pages/Auth';
+import ResetPassword from './pages/ResetPassword';
 import TutorOnboarding from './pages/TutorOnboarding';
 import TuitionRequest from './pages/TuitionRequest';
 import TuitionRequestSuccess from './pages/TuitionRequestSuccess';
 import EmailVerification from './pages/EmailVerification';
+import AboutUs from './pages/AboutUs';
+import FAQ from './pages/FAQ';
+import Contact from './pages/Contact';
+import Blog from './pages/Blog';
+import BlogDetail from './pages/BlogDetail';
 import Dashboard from './pages/Dashboard';
 import AllTuitions from './pages/AllTuitions';
 import MyTuitions from './pages/MyTuitions';
@@ -27,6 +33,9 @@ function App() {
         {/* Auth Page - No sidebar/navbar */}
         <Route path="/auth" element={<Auth />} />
         
+        {/* Reset Password Page - No sidebar/navbar */}
+        <Route path="/reset-password" element={<ResetPassword />} />
+        
         {/* Email Verification Page - No sidebar/navbar */}
         <Route path="/verify-email" element={<EmailVerification />} />
         
@@ -38,6 +47,13 @@ function App() {
         
         {/* Tuition Request Success Page - No sidebar/navbar */}
         <Route path="/tuition-request-success" element={<TuitionRequestSuccess />} />
+        
+        {/* Public Pages - No sidebar/navbar */}
+        <Route path="/about" element={<AboutUs />} />
+        <Route path="/faq" element={<FAQ />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/blog" element={<Blog />} />
+        <Route path="/blog/:slug" element={<BlogDetail />} />
         
         {/* Dashboard routes with sidebar and navbar */}
         <Route path="/*" element={

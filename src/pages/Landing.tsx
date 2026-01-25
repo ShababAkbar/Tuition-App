@@ -3,6 +3,7 @@ import LandingHero from "@/components/landing/LandingHero";
 import LandingStats from "@/components/landing/LandingStats";
 import LandingServices from "@/components/landing/LandingServices";
 import LandingReviews from "@/components/landing/LandingReviews";
+import TopCities from "@/components/landing/TopCities";
 import LandingFooter from "@/components/landing/LandingFooter";
 
 const Landing = () => {
@@ -13,6 +14,7 @@ const Landing = () => {
         <LandingHero />
         <LandingStats />
         <LandingServices />
+        <TopCities />
         <LandingReviews />
       </main>
       <LandingFooter />

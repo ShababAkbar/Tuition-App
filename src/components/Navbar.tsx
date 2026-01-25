@@ -1,8 +1,9 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { GraduationCap, Home, LogOut, User } from 'lucide-react';
+import { Home, LogOut, User } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { signOut } from '@/lib/auth';
 import { useState } from 'react';
+import logo from '@/assets/logo.png';
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -33,8 +34,11 @@ export default function Navbar() {
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <Link to="/" className="flex items-center space-x-2">
-            <GraduationCap className="w-8 h-8 text-blue-600" />
-            <span className="text-xl font-bold text-gray-900">TutorHub</span>
+            <img src={logo} alt="ApnaTuition" className="h-12" />
+            <span className="text-2xl font-bold">
+              <span className="text-gray-900">Apna</span>
+              <span className="text-blue-600">Tuition</span>
+            </span>
           </Link>
 
           <div className="flex space-x-4">

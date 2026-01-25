@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
-import { Menu, Search, GraduationCap } from "lucide-react";
+import { Menu, Search } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import logo from "@/assets/logo.png";
 
 const LandingNavbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -13,24 +14,42 @@ const LandingNavbar = () => {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-            <GraduationCap className="w-8 h-8 text-blue-600" />
-            <span className="text-xl font-bold text-gray-900">TutorHub</span>
+            <img src={logo} alt="ApnaTuition" className="h-14" />
+            <span className="text-2xl font-bold">
+              <span className="text-gray-900">Apna</span>
+              <span className="text-blue-600">Tuition</span>
+            </span>
           </div>
 
           {/* Desktop Navigation */}
           <div className="hidden items-center gap-8 md:flex">
-            <a href="#home" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
+            <a href="/" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
               Home
             </a>
-            <a href="#about" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
+            <button 
+              onClick={() => navigate('/about')}
+              className="text-gray-700 hover:text-blue-600 transition-colors font-medium"
+            >
               About Us
-            </a>
-            <a href="#services" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
-              Services
-            </a>
-            <a href="#contact" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
+            </button>
+            <button 
+              onClick={() => navigate('/faq')}
+              className="text-gray-700 hover:text-blue-600 transition-colors font-medium"
+            >
+              FAQ
+            </button>
+            <button 
+              onClick={() => navigate('/blog')}
+              className="text-gray-700 hover:text-blue-600 transition-colors font-medium"
+            >
+              Blog
+            </button>
+            <button 
+              onClick={() => navigate('/contact')}
+              className="text-gray-700 hover:text-blue-600 transition-colors font-medium"
+            >
               Contact
-            </a>
+            </button>
           </div>
 
           {/* Desktop Actions */}
@@ -62,18 +81,33 @@ const LandingNavbar = () => {
         {mobileMenuOpen && (
           <div className="border-t border-border py-4 md:hidden">
             <div className="flex flex-col gap-4">
-              <a href="#home" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
+              <a href="/" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
                 Home
               </a>
-              <a href="#about" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
+              <button 
+                onClick={() => navigate('/about')}
+                className="text-gray-700 hover:text-blue-600 transition-colors font-medium text-left"
+              >
                 About Us
-              </a>
-              <a href="#services" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
-                Services
-              </a>
-              <a href="#contact" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
+              </button>
+              <button 
+                onClick={() => navigate('/faq')}
+                className="text-gray-700 hover:text-blue-600 transition-colors font-medium text-left"
+              >
+                FAQ
+              </button>
+              <button 
+                onClick={() => navigate('/blog')}
+                className="text-gray-700 hover:text-blue-600 transition-colors font-medium text-left"
+              >
+                Blog
+              </button>
+              <button 
+                onClick={() => navigate('/contact')}
+                className="text-gray-700 hover:text-blue-600 transition-colors font-medium text-left"
+              >
                 Contact
-              </a>
+              </button>
               <Button 
                 className="bg-blue-600 hover:bg-blue-700 text-white w-full"
                 size="lg"

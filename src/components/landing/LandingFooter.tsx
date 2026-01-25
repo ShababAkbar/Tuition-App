@@ -1,4 +1,5 @@
-import { Facebook, Instagram, Twitter, Mail, Phone, MapPin, GraduationCap } from "lucide-react";
+import { Facebook, Instagram, Twitter, Mail, Phone, MapPin } from "lucide-react";
+import logo from "@/assets/logo.png";
 
 const LandingFooter = () => {
   return (
@@ -8,8 +9,11 @@ const LandingFooter = () => {
           {/* Brand */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <GraduationCap className="w-8 h-8 text-blue-600" />
-              <span className="text-xl font-bold text-white">TutorHub</span>
+              <img src={logo} alt="ApnaTuition" className="h-12" />
+              <span className="text-2xl font-bold">
+                <span className="text-white">Apna</span>
+                <span className="text-blue-600">Tuition</span>
+              </span>
             </div>
             <p className="text-sm text-gray-400">
               Making high-quality home tuition and online tutoring accessible, affordable, and results-driven.
@@ -32,23 +36,28 @@ const LandingFooter = () => {
             <h3 className="font-semibold text-white mb-4">Quick Links</h3>
             <ul className="space-y-2">
               <li>
-                <a href="#about" className="text-sm text-gray-400 hover:text-blue-600 transition-colors">
+                <a href="/about" className="text-sm text-gray-400 hover:text-blue-600 transition-colors">
                   About Us
                 </a>
               </li>
               <li>
-                <a href="#services" className="text-sm text-gray-400 hover:text-blue-600 transition-colors">
-                  Our Services
+                <a href="/faq" className="text-sm text-gray-400 hover:text-blue-600 transition-colors">
+                  FAQ
                 </a>
               </li>
               <li>
-                <a href="/profile" className="text-sm text-gray-400 hover:text-blue-600 transition-colors">
+                <a href="/auth?type=tutor" className="text-sm text-gray-400 hover:text-blue-600 transition-colors">
                   Become a Tutor
                 </a>
               </li>
               <li>
-                <a href="#" className="text-sm text-gray-400 hover:text-blue-600 transition-colors">
+                <a href="/blog" className="text-sm text-gray-400 hover:text-blue-600 transition-colors">
                   Blog
+                </a>
+              </li>
+              <li>
+                <a href="/contact" className="text-sm text-gray-400 hover:text-blue-600 transition-colors">
+                  Contact
                 </a>
               </li>
             </ul>
@@ -59,22 +68,22 @@ const LandingFooter = () => {
             <h3 className="font-semibold text-white mb-4">Services</h3>
             <ul className="space-y-2">
               <li>
-                <a href="#services" className="text-sm text-gray-400 hover:text-blue-600 transition-colors">
+                <a href="/tuition-request" className="text-sm text-gray-400 hover:text-blue-600 transition-colors">
                   Home Tutoring
                 </a>
               </li>
               <li>
-                <a href="#services" className="text-sm text-gray-400 hover:text-blue-600 transition-colors">
+                <a href="/tuition-request" className="text-sm text-gray-400 hover:text-blue-600 transition-colors">
                   Online Tutoring
                 </a>
               </li>
               <li>
-                <a href="#services" className="text-sm text-gray-400 hover:text-blue-600 transition-colors">
+                <a href="/tuition-request" className="text-sm text-gray-400 hover:text-blue-600 transition-colors">
                   Exam Preparation
                 </a>
               </li>
               <li>
-                <a href="#services" className="text-sm text-gray-400 hover:text-blue-600 transition-colors">
+                <a href="/tuition-request" className="text-sm text-gray-400 hover:text-blue-600 transition-colors">
                   O/A Levels
                 </a>
               </li>
@@ -87,15 +96,15 @@ const LandingFooter = () => {
             <ul className="space-y-3">
               <li className="flex items-start gap-2">
                 <Phone className="h-4 w-4 text-blue-600 mt-0.5" />
-                <span className="text-sm text-gray-400">+92 300 1234567</span>
+                <a href="tel:03194394344" className="text-sm text-gray-400 hover:text-blue-600 transition-colors">03194394344</a>
               </li>
               <li className="flex items-start gap-2">
                 <Mail className="h-4 w-4 text-blue-600 mt-0.5" />
-                <span className="text-sm text-gray-400">info@tutorhub.com</span>
+                <a href="mailto:team.apnatuition@gmail.com" className="text-sm text-gray-400 hover:text-blue-600 transition-colors">team.apnatuition@gmail.com</a>
               </li>
               <li className="flex items-start gap-2">
                 <MapPin className="h-4 w-4 text-blue-600 mt-0.5" />
-                <span className="text-sm text-gray-400">Karachi, Pakistan</span>
+                <span className="text-sm text-gray-400">Lahore, Pakistan</span>
               </li>
             </ul>
           </div>
@@ -103,7 +112,7 @@ const LandingFooter = () => {
 
         <div className="border-t border-gray-800 mt-12 pt-8 text-center">
           <p className="text-sm text-gray-400">
-            © 2025 TutorHub. All rights reserved.
+            © 2026 ApnaTuition. All rights reserved.
           </p>
         </div>
       </div>

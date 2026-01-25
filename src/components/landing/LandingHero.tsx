@@ -1,9 +1,34 @@
 import { ArrowRight, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
 import heroImage from "@/assets/hero-illustration.png";
 
 const LandingHero = () => {
   const navigate = useNavigate();
+  const [stats, setStats] = useState({ tutors: "3000+", students: "5000+" });
+
+  useEffect(() => {
+    fetchQuickStats();
+  }, []);
+
+  const fetchQuickStats = async () => {
+    try {
+      const { data } = await supabase
+        .from('dashboard_stats')
+        .select('active_tutors, happy_students')
+        .single();
+
+      if (data) {
+        setStats({
+          tutors: data.active_tutors + '+' || '3000+',
+          students: data.happy_students || '5000+'
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching hero stats:', error);
+    }
+  };
 
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-purple-50 to-blue-100 py-16 lg:py-24">
@@ -28,28 +53,30 @@ const LandingHero = () => {
 
             <div className="flex flex-wrap gap-4">
               <button 
-                className="group inline-flex items-center justify-center rounded-lg bg-blue-600 px-8 py-3.5 text-base font-semibold text-white hover:bg-blue-700 transition-all shadow-lg hover:shadow-xl"
-                onClick={() => navigate('/auth?type=parent')}
+                className="group relative inline-flex items-center justify-center rounded-lg bg-blue-600 px-8 py-3.5 text-base font-semibold text-white hover:bg-blue-700 transition-all shadow-lg hover:shadow-xl overflow-hidden"
+                onClick={() => navigate('/tuition-request')}
               >
-                For Parents
-                <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                <span className="absolute inset-0 w-0 bg-white/20 transition-all duration-500 ease-out group-hover:w-full"></span>
+                <span className="relative">For Parents</span>
+                <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1 relative" />
               </button>
               <button 
-                className="inline-flex items-center justify-center rounded-lg bg-gray-100 px-8 py-3.5 text-base font-semibold text-gray-800 hover:bg-gray-200 transition-all border border-gray-200"
+                className="group relative inline-flex items-center justify-center rounded-lg bg-blue-600 px-8 py-3.5 text-base font-semibold text-white hover:bg-blue-700 transition-all shadow-lg hover:shadow-xl overflow-hidden"
                 onClick={() => navigate('/auth?type=tutor')}
               >
-                For Tutors
+                <span className="absolute inset-0 w-0 bg-white/20 transition-all duration-500 ease-out group-hover:w-full"></span>
+                <span className="relative">For Tutors</span>
               </button>
             </div>
 
             <div className="flex items-center gap-8 pt-6">
               <div>
-                <div className="text-3xl font-extrabold text-gray-900">3000+</div>
+                <div className="text-3xl font-extrabold text-gray-900">{stats.tutors}</div>
                 <div className="text-sm text-gray-600 font-medium">Active Tutors</div>
               </div>
               <div className="h-12 w-px bg-gray-300" />
               <div>
-                <div className="text-3xl font-extrabold text-gray-900">5000+</div>
+                <div className="text-3xl font-extrabold text-gray-900">{stats.students}</div>
                 <div className="text-sm text-gray-600 font-medium">Happy Students</div>
               </div>
             </div>

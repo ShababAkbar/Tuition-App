@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { GraduationCap, Mail, CheckCircle, Clock } from "lucide-react";
+import { Mail, CheckCircle, Clock } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
+import logo from "@/assets/logo.png";
 
 const EmailVerification = () => {
   const [searchParams] = useSearchParams();
@@ -13,7 +14,6 @@ const EmailVerification = () => {
   const email = searchParams.get("email") || "";
   const [resendDisabled, setResendDisabled] = useState(false);
   const [countdown, setCountdown] = useState(0);
-  const [isResending, setIsResending] = useState(false);
 
   useEffect(() => {
     if (countdown > 0) {
@@ -34,8 +34,6 @@ const EmailVerification = () => {
       return;
     }
 
-    setIsResending(true);
-    
     try {
       console.log('Attempting to resend email to:', email);
       
@@ -73,8 +71,6 @@ const EmailVerification = () => {
         description: error.message || "Failed to resend email. Please try again later.",
         variant: "destructive",
       });
-    } finally {
-      setIsResending(false);
     }
   };
 
@@ -83,10 +79,10 @@ const EmailVerification = () => {
       {/* Left Side - Branding */}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 to-blue-800 p-12 flex-col justify-center items-center text-white">
         <div className="max-w-md space-y-8">
-          <div className="flex items-center gap-3">
-            <GraduationCap className="w-16 h-16" />
-            <h1 className="text-5xl font-bold">TutorHub</h1>
+          <div className="flex justify-center">
+            <img src={logo} alt="ApnaTuition" className="h-24" />
           </div>
+          <h1 className="text-5xl font-bold text-center">ApnaTuition</h1>
           
           <p className="text-xl text-blue-100">
             Empowering education through quality tutoring
@@ -125,8 +121,7 @@ const EmailVerification = () => {
         <div className="w-full max-w-md">
           {/* Mobile Logo */}
           <div className="lg:hidden flex items-center justify-center gap-2 mb-8">
-            <GraduationCap className="w-10 h-10 text-blue-600" />
-            <h1 className="text-3xl font-bold text-gray-900">TutorHub</h1>
+            <img src={logo} alt="ApnaTuition" className="h-12" />
           </div>
 
           <Card className="shadow-lg">
