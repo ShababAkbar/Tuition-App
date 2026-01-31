@@ -102,8 +102,8 @@ export default function TuitionDetails() {
 
     if (profileStatus === 'rejected') {
       toast({
-        title: 'Profile Rejected',
-        description: 'Your profile was not approved. Please contact support for assistance.',
+        title: 'Cannot Apply - Profile Not Approved',
+        description: 'Your profile was rejected. Please improve your profile with complete qualifications and experience, then contact support for re-evaluation.',
         variant: 'destructive',
       });
       return;

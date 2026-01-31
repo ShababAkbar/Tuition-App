@@ -143,9 +143,10 @@ export default function Dashboard() {
               <GraduationCap className="w-6 h-6 text-red-600" />
             </div>
             <div>
-              <h3 className="font-semibold text-red-900">Profile Rejected</h3>
+              <h3 className="font-semibold text-red-900">Profile Not Approved</h3>
               <p className="text-sm text-red-700">
-                Your profile was not approved. Please contact support for more information.
+                Your tutor profile was rejected due to incomplete or insufficient information. 
+                Please update your profile with complete details and qualifications, then contact support to request a re-review.
               </p>
             </div>
           </div>
