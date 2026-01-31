@@ -30,6 +30,20 @@ dist-ssr
 test-email.js
 generate-db-docs.js
 
+# Internal documentation (not needed in repo)
+*_GUIDE.md
+*_SUMMARY.md
+*_CHANGES.md
+*_FIX.md
+*_ANALYSIS.md
+*_WORKFLOW.md
+*_INSTRUCTIONS.md
+*_SYSTEM.md
+*_CHECKLIST.md
+*_AUDIT.md
+MISSING_*.sql
+SUPABASE_SETUP.sql
+
 # Supabase local development
 .supabase/
 **/supabase/.branches
