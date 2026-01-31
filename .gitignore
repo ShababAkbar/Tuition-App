@@ -26,6 +26,10 @@ dist-ssr
 .env.local
 .env*.local
 
+# Test files with sensitive data
+test-email.js
+generate-db-docs.js
+
 # Supabase local development
 .supabase/
 **/supabase/.branches
