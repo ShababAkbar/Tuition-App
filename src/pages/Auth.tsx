@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import { signIn, signUp } from "@/lib/auth";
 import { notifySuccessfulLogin } from "@/lib/email";
+import { ADMIN_USER_ID } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,6 +21,32 @@ const Auth = () => {
     if (userType === "parent") {
       navigate("/tuition-request", { replace: true });
     }
+  }, [userType, navigate]);
+
+  // Check if user is already authenticated
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (session?.user && userType === "tutor") {
+        // User is already logged in, check their profile status
+        const { data: tutorProfile } = await supabase
+          .from("new_tutor")
+          .select("*")
+          .eq("user_id", session.user.id)
+          .maybeSingle();
+
+        if (!tutorProfile) {
+          // No profile - go to onboarding
+          navigate("/tutor-onboarding", { replace: true });
+        } else {
+          // Has profile - go to dashboard
+          navigate("/dashboard", { replace: true });
+        }
+      }
+    };
+
+    checkSession();
   }, [userType, navigate]);
 
   // Don't render anything if it's a parent to avoid blinking
@@ -86,6 +113,12 @@ const Auth = () => {
       notifySuccessfulLogin(email).catch(err => {
         console.warn('Login email notification failed:', err);
       });
+
+      // Check if admin user
+      if (user?.id === ADMIN_USER_ID) {
+        navigate("/admin-dashboard");
+        return;
+      }
 
       if (userType === "tutor") {
         // Check if new_tutor application exists (pending/approved)

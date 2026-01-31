@@ -1,14 +1,25 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { Home, LogOut, User } from 'lucide-react';
+import { Home, LogOut, User, Shield } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { signOut } from '@/lib/auth';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabase';
+import { ADMIN_USER_ID } from '@/lib/constants';
 import logo from '@/assets/logo.png';
 
 export default function Navbar() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isSigningOut, setIsSigningOut] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const checkAdmin = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setIsAdmin(user?.id === ADMIN_USER_ID);
+    };
+    checkAdmin();
+  }, []);
 
   const handleSignOut = async () => {
     if (isSigningOut) return;
@@ -42,6 +53,15 @@ export default function Navbar() {
           </Link>
 
           <div className="flex space-x-4">
+            {isAdmin && (
+              <Link
+                to="/admin-dashboard"
+                className="flex items-center px-4 py-2 rounded-lg font-medium text-white bg-purple-600 hover:bg-purple-700 transition-colors"
+              >
+                <Shield className="w-5 h-5 mr-2" />
+                Admin Panel
+              </Link>
+            )}
             <Link
               to="/dashboard"
               className="flex items-center px-4 py-2 rounded-lg font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors"

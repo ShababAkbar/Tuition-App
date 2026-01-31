@@ -141,3 +141,6 @@ export const VALIDATION_PATTERNS = {
   postalCode: /^[0-9]{5}$/,
   cnic: /^[0-9]{13}$/
 };
+
+// Admin User ID - loaded from environment variable only (not hardcoded for security)
+export const ADMIN_USER_ID = import.meta.env.VITE_ADMIN_USER_ID;

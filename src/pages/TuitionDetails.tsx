@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, BookOpen, MapPin, Clock, DollarSign, User, Calendar } from 'lucide-react';
 import { supabase, Tuition } from '../lib/supabase';
 import { useToast } from '@/hooks/use-toast';
+import ApplicationModal from '../components/ApplicationModal';
 
 export default function TuitionDetails() {
   const { id } = useParams<{ id: string }>();
@@ -12,6 +13,7 @@ export default function TuitionDetails() {
   const [profileStatus, setProfileStatus] = useState<'incomplete' | 'pending' | 'approved' | 'rejected'>('incomplete');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -30,6 +32,7 @@ export default function TuitionDetails() {
         return;
       }
 
+      // Check new_tutor table
       const { data: tutorProfile } = await supabase
         .from('new_tutor')
         .select('status')
@@ -39,7 +42,19 @@ export default function TuitionDetails() {
       if (!tutorProfile) {
         setProfileStatus('incomplete');
       } else {
-        setProfileStatus(tutorProfile.status);
+        // Check if approved in tutors table
+        const { data: approvedTutor } = await supabase
+          .from('tutors')
+          .select('id')
+          .eq('user_id', user.id)
+          .maybeSingle();
+        
+        if (approvedTutor) {
+          setProfileStatus('approved');
+        } else {
+          // No entry in tutors table, use new_tutor status
+          setProfileStatus(tutorProfile.status as 'pending' | 'rejected');
+        }
       }
     } catch (err) {
       console.error('Error checking profile status:', err);
@@ -94,12 +109,81 @@ export default function TuitionDetails() {
       return;
     }
 
-    // If approved, proceed with application
-    toast({
-      title: 'Application Submitted!',
-      description: 'Your application for this tuition has been submitted successfully.',
-    });
-    // Add actual application logic here
+    // Show application modal
+    setShowModal(true);
+  };
+
+  const handleSubmitApplication = async (coverLetter: string) => {
+    try {
+      setShowModal(false);
+      
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast({
+          title: 'Authentication Required',
+          description: 'Please login to apply for tuitions.',
+          variant: 'destructive',
+        });
+        return;
+      }
+
+      const { data: tutorData } = await supabase
+        .from('tutors')
+        .select('*')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (!tutorData) {
+        toast({
+          title: 'Error',
+          description: 'Tutor profile not found. Please try again.',
+          variant: 'destructive',
+        });
+        return;
+      }
+
+      // Create application entry with cover letter
+      const { error } = await supabase
+        .from('tuition_applications')
+        .insert({
+          tuition_id: id,
+          tutor_id: tutorData.id,
+          tutor_name: `${tutorData.first_name} ${tutorData.last_name}`,
+          tutor_contact: tutorData.contact,
+          tutor_city: tutorData.city,
+          tutor_subjects: tutorData.subjects,
+          cover_letter: coverLetter,
+          status: 'pending',
+        });
+
+      if (error) {
+        // Check if already applied
+        if (error.code === '23505') {
+          toast({
+            title: 'Already Applied',
+            description: 'You have already submitted an application for this tuition.',
+            variant: 'destructive',
+          });
+        } else {
+          throw error;
+        }
+        return;
+      }
+
+      toast({
+        title: 'Application Submitted!',
+        description: 'Admin will review your application and notify you.',
+      });
+
+      // Navigate to dashboard after 1.5s
+      setTimeout(() => navigate('/dashboard'), 1500);
+    } catch (error: any) {
+      toast({
+        title: 'Error',
+        description: error.message || 'Failed to apply for tuition',
+        variant: 'destructive',
+      });
+    }
   };
 
   if (loading) {
@@ -136,11 +220,11 @@ export default function TuitionDetails() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
         <button
-          onClick={() => navigate('/')}
+          onClick={() => navigate('/dashboard')}
           className="mb-6 flex items-center text-blue-600 hover:text-blue-700 font-medium transition-colors"
         >
           <ArrowLeft className="w-5 h-5 mr-2" />
-          Back to All Tuitions
+          Back to Dashboard
         </button>
 
         <div className="bg-white rounded-xl shadow-lg overflow-hidden">
@@ -229,6 +313,21 @@ export default function TuitionDetails() {
           </div>
         </div>
       </div>
+
+      {/* Application Modal */}
+      {tuition && (
+        <ApplicationModal
+          isOpen={showModal}
+          onClose={() => setShowModal(false)}
+          onSubmit={handleSubmitApplication}
+          tuitionDetails={{
+            code: tuition.tuition_code,
+            subject: tuition.subject,
+            grade: tuition.grade,
+            fee: tuition.fee,
+          }}
+        />
+      )}
     </div>
   );
 }

@@ -15,9 +15,13 @@ import Contact from './pages/Contact';
 import Blog from './pages/Blog';
 import BlogDetail from './pages/BlogDetail';
 import Dashboard from './pages/Dashboard';
+import AdminDashboard from './pages/AdminDashboard';
 import AllTuitions from './pages/AllTuitions';
 import MyTuitions from './pages/MyTuitions';
 import TuitionDetails from './pages/TuitionDetails';
+import TutorApplicationDetail from './pages/TutorApplicationDetail';
+import TuitionRequestDetail from './pages/TuitionRequestDetail';
+import TuitionApplications from './pages/TuitionApplications';
 import Profile from './pages/Profile';
 import { Toaster } from './components/ui/toaster';
 
@@ -54,6 +58,12 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/blog" element={<Blog />} />
         <Route path="/blog/:slug" element={<BlogDetail />} />
+        
+        {/* Admin Dashboard - No sidebar */}
+        <Route path="/admin-dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/tutor-application/:id" element={<TutorApplicationDetail />} />
+        <Route path="/admin/tuition-request/:id" element={<TuitionRequestDetail />} />
+        <Route path="/admin/tuition-applications/:tuitionId" element={<TuitionApplications />} />
         
         {/* Dashboard routes with sidebar and navbar */}
         <Route path="/*" element={

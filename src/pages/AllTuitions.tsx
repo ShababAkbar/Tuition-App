@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Search } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Search, ArrowLeft } from 'lucide-react';
 import { supabase, Tuition } from '../lib/supabase';
 import TuitionListItem from '../components/TuitionListItem';
 
 export default function AllTuitions() {
+  const navigate = useNavigate();
   const [tuitions, setTuitions] = useState<Tuition[]>([]);
   const [filteredTuitions, setFilteredTuitions] = useState<Tuition[]>([]);
   const [cities, setCities] = useState<string[]>([]);
@@ -26,6 +28,7 @@ export default function AllTuitions() {
       const { data, error } = await supabase
         .from('tuition')
         .select('*')
+        .eq('status', 'available') // Only show unassigned tuitions
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -79,6 +82,15 @@ export default function AllTuitions() {
   return (
     <div className="min-h-screen bg-gray-50 p-4 lg:p-6">
       <div className="max-w-7xl mx-auto">
+        {/* Back Button */}
+        <button
+          onClick={() => navigate('/dashboard')}
+          className="flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-4 transition-colors"
+        >
+          <ArrowLeft className="w-5 h-5" />
+          <span className="font-medium">Back to Dashboard</span>
+        </button>
+        
         <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-4 lg:mb-6">
           Tuitions List
         </h1>

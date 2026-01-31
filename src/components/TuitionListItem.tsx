@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { supabase, Tuition } from '../lib/supabase';
+import { verifyAuthenticatedUser } from '../lib/auth';
+import ApplicationModal from './ApplicationModal';
 
 interface TuitionListItemProps {
   tuition: Tuition;
@@ -10,12 +12,76 @@ interface TuitionListItemProps {
 export default function TuitionListItem({ tuition, onUpdate }: TuitionListItemProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [applying, setApplying] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [profileStatus, setProfileStatus] = useState<'incomplete' | 'pending' | 'approved' | 'rejected'>('incomplete');
+
+  useEffect(() => {
+    checkProfileStatus();
+  }, []);
+
+  const checkProfileStatus = async () => {
+    try {
+      const user = await verifyAuthenticatedUser();
+      if (!user) {
+        setProfileStatus('incomplete');
+        return;
+      }
+
+      // Check if approved in tutors table
+      const { data: tutorData } = await supabase
+        .from('tutors')
+        .select('id')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (tutorData) {
+        setProfileStatus('approved');
+      } else {
+        // Check new_tutor table for pending status
+        const { data: pendingProfile } = await supabase
+          .from('new_tutor')
+          .select('status')
+          .eq('user_id', user.id)
+          .maybeSingle();
+        
+        if (pendingProfile) {
+          setProfileStatus(pendingProfile.status as 'pending' | 'rejected');
+        } else {
+          setProfileStatus('incomplete');
+        }
+      }
+    } catch (error) {
+      console.error('Error checking profile status:', error);
+    }
+  };
 
   const handleApply = async () => {
+    // Check profile status before showing modal
+    if (profileStatus === 'incomplete') {
+      alert('Please create a tutor profile first before applying for tuitions.');
+      return;
+    }
+
+    if (profileStatus === 'pending') {
+      alert('Your profile is pending approval. You will be able to apply once it is approved.');
+      return;
+    }
+
+    if (profileStatus === 'rejected') {
+      alert('Your profile was not approved. Please contact support for assistance.');
+      return;
+    }
+
+    // Show application modal
+    setShowModal(true);
+  };
+
+  const handleSubmitApplication = async (coverLetter: string) => {
     try {
       setApplying(true);
+      setShowModal(false);
 
-      const { data: { user } } = await supabase.auth.getUser();
+      const user = await verifyAuthenticatedUser();
       if (!user) {
         alert('Please login first');
         return;
@@ -23,23 +89,40 @@ export default function TuitionListItem({ tuition, onUpdate }: TuitionListItemPr
 
       const { data: tutorData } = await supabase
         .from('tutors')
-        .select('id')
+        .select('id, first_name, last_name, contact, city, subjects')
         .eq('user_id', user.id)
         .maybeSingle();
 
       if (!tutorData) {
-        alert('Please create a tutor profile first');
+        alert('Tutor profile not found. Please try again.');
         return;
       }
 
+      // Create application entry with cover letter
       const { error } = await supabase
-        .from('tuition')
-        .update({ tutor_id: tutorData.id })
-        .eq('id', tuition.id);
+        .from('tuition_applications')
+        .insert({
+          tuition_id: tuition.id,
+          tutor_id: tutorData.id,
+          tutor_name: `${tutorData.first_name} ${tutorData.last_name}`,
+          tutor_contact: tutorData.contact,
+          tutor_city: tutorData.city,
+          tutor_subjects: tutorData.subjects,
+          cover_letter: coverLetter,
+          status: 'pending',
+        });
 
-      if (error) throw error;
+      if (error) {
+        // Check if already applied
+        if (error.code === '23505') {
+          alert('You have already applied for this tuition!');
+        } else {
+          throw error;
+        }
+        return;
+      }
 
-      alert('Successfully applied for this tuition!');
+      alert('Application submitted successfully! Admin will review and assign.');
       onUpdate();
     } catch (error) {
       console.error('Error applying for tuition:', error);
@@ -149,6 +232,19 @@ export default function TuitionListItem({ tuition, onUpdate }: TuitionListItemPr
           </div>
         )}
       </div>
+
+      {/* Application Modal */}
+      <ApplicationModal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        onSubmit={handleSubmitApplication}
+        tuitionDetails={{
+          code: tuition.tuition_code,
+          subject: tuition.subject,
+          grade: tuition.grade,
+          fee: tuition.fee,
+        }}
+      />
     </div>
   );
 }

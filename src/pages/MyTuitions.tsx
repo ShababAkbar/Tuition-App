@@ -1,14 +1,18 @@
 import { useEffect, useState } from 'react';
 import { Search, Briefcase } from 'lucide-react';
 import { supabase, Tuition } from '../lib/supabase';
+import { verifyAuthenticatedUser } from '../lib/auth';
 import TuitionListItem from '../components/TuitionListItem';
+import { useNavigate } from 'react-router-dom';
 
 export default function MyTuitions() {
+  const navigate = useNavigate();
   const [myTuitions, setMyTuitions] = useState<Tuition[]>([]);
   const [filteredTuitions, setFilteredTuitions] = useState<Tuition[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
   const [tutorId, setTutorId] = useState<string | null>(null);
+  const [profileStatus, setProfileStatus] = useState<'incomplete' | 'pending' | 'approved' | 'rejected'>('incomplete');
 
   useEffect(() => {
     fetchMyTuitions();
@@ -22,7 +26,7 @@ export default function MyTuitions() {
     try {
       setLoading(true);
 
-      const { data: { user } } = await supabase.auth.getUser();
+      const user = await verifyAuthenticatedUser();
       if (!user) {
         setLoading(false);
         return;
@@ -35,9 +39,24 @@ export default function MyTuitions() {
         .maybeSingle();
 
       if (!tutorData) {
+        // Check if profile exists in new_tutor table (pending)
+        const { data: pendingProfile } = await supabase
+          .from('new_tutor')
+          .select('status')
+          .eq('user_id', user.id)
+          .maybeSingle();
+        
+        if (pendingProfile) {
+          setProfileStatus(pendingProfile.status as 'pending' | 'rejected');
+        } else {
+          setProfileStatus('incomplete');
+        }
+        
         setLoading(false);
         return;
       }
+
+      setProfileStatus('approved');
 
       setTutorId(tutorData.id);
 
@@ -45,6 +64,7 @@ export default function MyTuitions() {
         .from('tuition')
         .select('*')
         .eq('tutor_id', tutorData.id)
+        .eq('status', 'assigned') // Only show currently assigned tuitions
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -91,11 +111,36 @@ export default function MyTuitions() {
     return (
       <div className="min-h-screen bg-gray-50 p-6">
         <div className="max-w-7xl mx-auto">
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
-            <p className="text-yellow-800">
-              Please create a tutor profile first to view your tuitions.
-            </p>
-          </div>
+          {profileStatus === 'pending' && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
+              <h3 className="font-semibold text-blue-900 mb-2">Profile Under Review</h3>
+              <p className="text-blue-700">
+                Your profile is pending approval. You will be able to view tuitions once approved.
+              </p>
+            </div>
+          )}
+          {profileStatus === 'rejected' && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+              <h3 className="font-semibold text-red-900 mb-2">Profile Rejected</h3>
+              <p className="text-red-700">
+                Your profile was not approved. Please contact support for more information.
+              </p>
+            </div>
+          )}
+          {profileStatus === 'incomplete' && (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
+              <h3 className="font-semibold text-yellow-900 mb-2">Complete Your Profile</h3>
+              <p className="text-yellow-700 mb-4">
+                Please create a tutor profile first to view your tuitions.
+              </p>
+              <button
+                onClick={() => navigate('/tutor-onboarding')}
+                className="bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-2 rounded-lg font-medium transition-colors"
+              >
+                Complete Profile
+              </button>
+            </div>
+          )}
         </div>
       </div>
     );

@@ -2,6 +2,7 @@ import { ArrowRight, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { ADMIN_USER_ID } from "@/lib/constants";
 import heroImage from "@/assets/hero-illustration.png";
 
 const LandingHero = () => {
@@ -27,6 +28,39 @@ const LandingHero = () => {
       }
     } catch (error) {
       console.error('Error fetching hero stats:', error);
+    }
+  };
+
+  const handleTutorClick = async () => {
+    // Check if user is already authenticated
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    if (session?.user) {
+      // Check if user is admin
+      if (session.user.id === ADMIN_USER_ID) {
+        navigate("/admin-dashboard");
+        return;
+      }
+      
+      // User is logged in, check their profile status
+      const { data: tutorProfile, error: profileError } = await supabase
+        .from("new_tutor")
+        .select("*")
+        .eq("user_id", session.user.id)
+        .maybeSingle();
+
+      console.log('LandingHero - Profile check:', { tutorProfile, profileError, userId: session.user.id });
+
+      if (!tutorProfile) {
+        // No profile - go to onboarding
+        navigate("/tutor-onboarding");
+      } else {
+        // Has profile - go to dashboard
+        navigate("/dashboard");
+      }
+    } else {
+      // Not logged in - go to auth page
+      navigate('/auth?type=tutor');
     }
   };
 
@@ -62,7 +96,7 @@ const LandingHero = () => {
               </button>
               <button 
                 className="group relative inline-flex items-center justify-center rounded-lg bg-blue-600 px-8 py-3.5 text-base font-semibold text-white hover:bg-blue-700 transition-all shadow-lg hover:shadow-xl overflow-hidden"
-                onClick={() => navigate('/auth?type=tutor')}
+                onClick={handleTutorClick}
               >
                 <span className="absolute inset-0 w-0 bg-white/20 transition-all duration-500 ease-out group-hover:w-full"></span>
                 <span className="relative">For Tutors</span>

@@ -162,7 +162,7 @@ const EmailVerification = () => {
 
               <div className="pt-4 space-y-3">
                 <div className="text-center">
-                  <p className="text-sm text-gray-600 mb-3">Didn't receive the email?</p>
+                  <p className="text-sm text-gray-600 mb-3">Didn't receive the email? Please check your spam folder.</p>
                   <Button
                     onClick={handleResendEmail}
                     disabled={resendDisabled}

@@ -154,15 +154,14 @@ const AboutUs = () => {
               <Button 
                 onClick={() => navigate('/tuition-request')}
                 size="lg"
-                className="bg-white text-blue-600 hover:bg-gray-100"
+                className="bg-gray-900 text-white hover:bg-gray-800"
               >
                 Find a Tutor
               </Button>
               <Button 
                 onClick={() => navigate('/auth?type=tutor')}
                 size="lg"
-                variant="outline"
-                className="border-white text-white hover:bg-blue-700"
+                className="bg-gray-900 text-white hover:bg-gray-800"
               >
                 Become a Tutor
               </Button>

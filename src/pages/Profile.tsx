@@ -1,6 +1,8 @@
 import { useEffect, useState, useRef } from 'react';
-import { Camera, Mail, Phone, MapPin, Edit2, Save, CheckCircle, AlertCircle, X, Plus } from 'lucide-react';
+import { Camera, Phone, MapPin, Edit2, Save, CheckCircle, AlertCircle, X, Plus } from 'lucide-react';
 import { supabase, Tutor } from '../lib/supabase';
+import { verifyAuthenticatedUser } from '../lib/auth';
+import { useToast } from '@/hooks/use-toast';
 
 const AVAILABLE_SUBJECTS = [
   'Mathematics', 'Additional Mathematics', 'Algebra', 'Arithmetic', 'Chemistry',
@@ -10,6 +12,7 @@ const AVAILABLE_SUBJECTS = [
 ];
 
 export default function Profile() {
+  const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState({
     name: '',
@@ -24,6 +27,7 @@ export default function Profile() {
     education: [] as any[],
   });
   const [existingTutor, setExistingTutor] = useState<Tutor | null>(null);
+  const [profileStatus, setProfileStatus] = useState<'incomplete' | 'pending' | 'approved' | 'rejected'>('incomplete');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -31,17 +35,39 @@ export default function Profile() {
   const [error, setError] = useState<string | null>(null);
   const [showSubjectDropdown, setShowSubjectDropdown] = useState(false);
   const [passwordResetSent, setPasswordResetSent] = useState(false);
+  const [profilePictureUrl, setProfilePictureUrl] = useState<string>('');
 
   useEffect(() => {
     fetchTutorProfile();
   }, []);
 
+  // Generate signed URL for profile picture
+  useEffect(() => {
+    const loadProfilePicture = async () => {
+      if (formData.profile_picture && formData.profile_picture.includes('/')) {
+        try {
+          const { data, error } = await supabase.storage
+            .from('tutor-documents')
+            .createSignedUrl(formData.profile_picture, 3600); // 1 hour expiry
+          
+          if (data && !error) {
+            setProfilePictureUrl(data.signedUrl);
+          }
+        } catch (err) {
+          console.error('Error loading profile picture:', err);
+        }
+      }
+    };
+    
+    loadProfilePicture();
+  }, [formData.profile_picture]);
+
   const fetchTutorProfile = async () => {
     try {
       setLoading(true);
       
-      // Get current user
-      const { data: { user } } = await supabase.auth.getUser();
+      // Verify user actually exists in database
+      const user = await verifyAuthenticatedUser();
       if (!user) {
         setError('User not authenticated');
         return;
@@ -58,6 +84,7 @@ export default function Profile() {
 
       if (data) {
         setExistingTutor(data);
+        setProfileStatus('approved');
         setFormData({
           name: `${data.first_name || ''} ${data.last_name || ''}`.trim() || data.name || '',
           email: data.email || user.email || '',
@@ -71,6 +98,19 @@ export default function Profile() {
           education: data.education || [],
         });
       } else {
+        // Check if profile exists in new_tutor table (pending)
+        const { data: pendingProfile } = await supabase
+          .from('new_tutor')
+          .select('status')
+          .eq('user_id', user.id)
+          .maybeSingle();
+        
+        if (pendingProfile) {
+          setProfileStatus(pendingProfile.status as 'pending' | 'rejected');
+        } else {
+          setProfileStatus('incomplete');
+        }
+        
         // No profile yet, set email from auth
         setFormData(prev => ({ ...prev, email: user.email || '' }));
       }
@@ -152,7 +192,7 @@ export default function Profile() {
       const fileName = `${user.id}/profile_${Date.now()}.${fileExt}`;
 
       // Upload to Supabase Storage
-      const { data, error: uploadError } = await supabase.storage
+      const { error: uploadError } = await supabase.storage
         .from('tutor-documents')
         .upload(fileName, file, {
           upsert: true,
@@ -161,18 +201,14 @@ export default function Profile() {
 
       if (uploadError) throw uploadError;
 
-      // Get public URL
-      const { data: { publicUrl } } = supabase.storage
-        .from('tutor-documents')
-        .getPublicUrl(fileName);
-
-      setFormData(prev => ({ ...prev, profile_picture: publicUrl }));
+      // Store the file path (not public URL, since bucket is private)
+      setFormData(prev => ({ ...prev, profile_picture: fileName }));
       
-      // Auto-save the profile picture
+      // Auto-save the profile picture file path
       if (existingTutor) {
         await supabase
           .from('tutors')
-          .update({ profile_picture: publicUrl })
+          .update({ profile_picture: fileName })
           .eq('user_id', user.id);
       }
 
@@ -228,6 +264,25 @@ export default function Profile() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Check if profile is pending or incomplete
+    if (profileStatus === 'pending') {
+      toast({
+        title: 'Profile Under Review',
+        description: 'Your profile is currently pending approval. You cannot edit it at this time.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (profileStatus === 'incomplete' || profileStatus === 'rejected') {
+      toast({
+        title: 'Profile Not Approved',
+        description: 'Your profile is not yet approved. Please complete tutor onboarding first.',
+        variant: 'destructive',
+      });
+      return;
+    }
 
     if (!formData.name.trim() || !formData.email.trim() || !formData.phone.trim()) {
       setError('Name, email, and phone are required');
@@ -302,8 +357,8 @@ export default function Profile() {
               <div className="relative">
                 <div className="w-32 h-32 rounded-full bg-white p-2 shadow-xl">
                   <div className="w-full h-full rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
-                    {formData.profile_picture ? (
-                      <img src={formData.profile_picture} alt="Profile" className="w-full h-full object-cover" />
+                    {profilePictureUrl ? (
+                      <img src={profilePictureUrl} alt="Profile" className="w-full h-full object-cover" />
                     ) : (
                       <Camera className="w-12 h-12 text-gray-400" />
                     )}
@@ -588,8 +643,8 @@ export default function Profile() {
               <div className="flex justify-end">
                 <button
                   type="submit"
-                  disabled={saving}
-                  className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium py-3 px-8 rounded-lg transition-colors flex items-center"
+                  disabled={saving || profileStatus !== 'approved'}
+                  className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-medium py-3 px-8 rounded-lg transition-colors flex items-center"
                 >
                   {saving ? (
                     <>
@@ -599,7 +654,7 @@ export default function Profile() {
                   ) : (
                     <>
                       <Save className="w-5 h-5 mr-2" />
-                      Save Changes
+                      {profileStatus === 'pending' ? 'Profile Under Review' : profileStatus !== 'approved' ? 'Complete Onboarding First' : 'Save Changes'}
                     </>
                   )}
                 </button>

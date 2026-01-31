@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BookOpen, Briefcase, ChevronRight, GraduationCap } from 'lucide-react';
 import { supabase, Tuition, Tutor } from '../lib/supabase';
+import { verifyAuthenticatedUser } from '../lib/auth';
 import TuitionCard from '../components/TuitionCard';
 
 export default function Dashboard() {
@@ -22,9 +23,8 @@ export default function Dashboard() {
     try {
       setLoading(true);
 
-      // Get current user
-      const { data } = await supabase.auth.getSession();
-      const user = data.session?.user;
+      // Verify user actually exists in database
+      const user = await verifyAuthenticatedUser();
       
       if (!user) {
         navigate('/auth?type=tutor');
@@ -40,33 +40,39 @@ export default function Dashboard() {
 
       setTutorProfile(tutorProfileData);
 
+      // Check tutors table (approved tutors)
+      const { data: tutorData } = await supabase
+        .from('tutors')
+        .select('*')
+        .eq('user_id', user.id)
+        .maybeSingle();
+      
+      setTutor(tutorData);
+
       if (!tutorProfileData) {
+        // No profile exists at all
         setProfileStatus('incomplete');
       } else {
-        setProfileStatus(tutorProfileData.status);
-        
-        // If approved, also check tutors table
-        if (tutorProfileData.status === 'approved') {
-          const { data: tutorData } = await supabase
-            .from('tutors')
-            .select('*')
-            .eq('user_id', user.id)
-            .maybeSingle();
-          
-          setTutor(tutorData);
+        if (tutorData) {
+          // Entry in tutors table means approved
+          setProfileStatus('approved');
+        } else {
+          // No entry in tutors table, use new_tutor status
+          setProfileStatus(tutorProfileData.status as 'pending' | 'approved' | 'rejected');
         }
       }
 
       const [latestResult, allCountResult] = await Promise.all([
-        supabase.from('tuition').select('*').order('created_at', { ascending: false }).limit(4),
-        supabase.from('tuition').select('id', { count: 'exact', head: true }),
+        supabase.from('tuition').select('*').eq('status', 'available').order('created_at', { ascending: false }).limit(4),
+        supabase.from('tuition').select('id', { count: 'exact', head: true }).eq('status', 'available'),
       ]);
 
-      if (tutor) {
+      if (tutorData) {
         const myTuitionsResult = await supabase
           .from('tuition')
           .select('id', { count: 'exact', head: true })
-          .eq('tutor_id', tutor.id);
+          .eq('tutor_id', tutorData.id)
+          .eq('status', 'assigned');
 
         setMyTuitionsCount(myTuitionsResult.count || 0);
       }
@@ -117,7 +123,7 @@ export default function Dashboard() {
           </div>
         )}
 
-        {profileStatus === 'pending' && (
+        {(profileStatus === 'pending') && (
           <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-center space-x-3">
             <div className="bg-blue-100 rounded-full p-2">
               <GraduationCap className="w-6 h-6 text-blue-600" />
@@ -147,7 +153,7 @@ export default function Dashboard() {
 
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Welcome, {tutorProfile?.first_name || tutor?.name || 'Tutor'}
+            Welcome, {tutorProfile?.first_name || 'Tutor'}
           </h1>
           <p className="text-gray-600">Here's what's happening with your tuitions today</p>
         </div>
