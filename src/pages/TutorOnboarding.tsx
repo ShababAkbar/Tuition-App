@@ -26,6 +26,7 @@ const TutorOnboarding = () => {
     contact: "",
     otherContact: "",
     city: "",
+    customCity: "",
     state: "",
     address: "",
     postalCode: "",
@@ -125,7 +126,11 @@ const TutorOnboarding = () => {
         } else if (!VALIDATION_PATTERNS.phone.test(formData.contact)) {
           newErrors.contact = "Invalid phone number format (e.g., 03001234567)";
         }
-        if (!formData.city.trim()) newErrors.city = "City is required";
+        if (!formData.city.trim()) {
+          newErrors.city = "City is required";
+        } else if (formData.city === "Other" && !formData.customCity.trim()) {
+          newErrors.customCity = "Please enter your city name";
+        }
         if (!formData.state.trim()) newErrors.state = "State/Province is required";
         if (!formData.address.trim()) newErrors.address = "Address is required";
         if (!formData.postalCode.trim()) {
@@ -358,7 +363,7 @@ const TutorOnboarding = () => {
         father_name: formData.fatherName,
         contact: formData.contact,
         other_contact: formData.otherContact || null,
-        city: formData.city,
+        city: formData.city === "Other" ? formData.customCity : formData.city,
         state: formData.state,
         address: formData.address,
         postal_code: formData.postalCode,
@@ -466,6 +471,20 @@ const TutorOnboarding = () => {
                 </Select>
                 {errors.city && <p className="text-xs text-red-500">{errors.city}</p>}
               </div>
+              {formData.city === "Other" && (
+                <div className="space-y-2">
+                  <Label htmlFor="customCity">Enter Your City <span className="text-red-500">*</span></Label>
+                  <Input
+                    id="customCity"
+                    type="text"
+                    placeholder="Enter your city name"
+                    value={formData.customCity}
+                    onChange={(e) => updateField("customCity", e.target.value)}
+                    error={!!errors.customCity}
+                  />
+                  {errors.customCity && <p className="text-xs text-red-500">{errors.customCity}</p>}
+                </div>
+              )}
               <div className="space-y-2">
                 <Label htmlFor="state">State/Province <span className="text-red-500">*</span></Label>
                 <Select
