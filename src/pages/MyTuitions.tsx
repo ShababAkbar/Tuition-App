@@ -147,31 +147,31 @@ export default function MyTuitions() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50 p-3 sm:p-6">
       <div className="max-w-7xl mx-auto">
-        <div className="flex items-center space-x-3 mb-6">
-          <Briefcase className="w-8 h-8 text-blue-600" />
-          <h1 className="text-3xl font-bold text-gray-900">My Tuitions</h1>
+        <div className="flex items-center space-x-2 sm:space-x-3 mb-4 sm:mb-6">
+          <Briefcase className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" />
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">My Tuitions</h1>
         </div>
 
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+        <div className="bg-white rounded-lg shadow-md p-3 sm:p-6 mb-4 sm:mb-6">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 sm:w-5 sm:h-5" />
             <input
               type="text"
               placeholder="Search your tuitions..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full pl-9 sm:pl-10 pr-3 sm:pr-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           {filteredTuitions.length === 0 ? (
-            <div className="bg-white rounded-lg shadow-md p-8 text-center">
-              <Briefcase className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600 text-lg">
+            <div className="bg-white rounded-lg shadow-md p-6 sm:p-8 text-center">
+              <Briefcase className="w-10 h-10 sm:w-12 sm:h-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-600 text-sm sm:text-base lg:text-lg">
                 {myTuitions.length === 0
                   ? "You haven't applied for any tuitions yet"
                   : 'No tuitions found matching your search'}
