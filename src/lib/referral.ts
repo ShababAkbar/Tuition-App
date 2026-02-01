@@ -1,14 +1,16 @@
 /**
  * Simple referral tracking utility
  * Captures influencer referral codes from URL parameters
+ * 48-hour window: Fair to both influencer and platform
  */
 
 const REFERRAL_KEY = 'apna_tuition_referral';
-const REFERRAL_EXPIRY = 30 * 24 * 60 * 60 * 1000; // 30 days in milliseconds
+const REFERRAL_EXPIRY = 48 * 60 * 60 * 1000; // 48 hours in milliseconds
 
 /**
  * Capture referral code from URL on page load
  * Example: apna-tuition.com?ref=Ali
+ * Each click refreshes the 48-hour window
  */
 export const captureReferralCode = () => {
   try {
@@ -18,7 +20,7 @@ export const captureReferralCode = () => {
     if (refCode) {
       const referralData = {
         code: refCode,
-        timestamp: Date.now()
+        timestamp: Date.now() // Refresh timestamp on every click
       };
       localStorage.setItem(REFERRAL_KEY, JSON.stringify(referralData));
       console.log('Referral code captured:', refCode);
@@ -29,8 +31,8 @@ export const captureReferralCode = () => {
 };
 
 /**
- * Get active referral code (if not expired)
- * Returns null for organic/direct traffic
+ * Get active referral code (if within 48 hours)
+ * Returns null for organic/direct traffic after 48 hours
  */
 export const getReferralCode = (): string | null => {
   try {
@@ -39,11 +41,12 @@ export const getReferralCode = (): string | null => {
 
     const { code, timestamp } = JSON.parse(stored);
     
-    // Check if expired (30 days)
+    // Check if expired (48 hours)
     const isExpired = (Date.now() - timestamp) > REFERRAL_EXPIRY;
     
     if (isExpired) {
       localStorage.removeItem(REFERRAL_KEY);
+      console.log('Referral code expired (48 hours passed)');
       return null;
     }
 
