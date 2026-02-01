@@ -27,6 +27,7 @@ import { Toaster } from './components/ui/toaster';
 
 function App() {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
   return (
     <BrowserRouter>
@@ -68,10 +69,15 @@ function App() {
         {/* Dashboard routes with sidebar and navbar */}
         <Route path="/*" element={
           <div className="min-h-screen bg-gray-50">
-            <Navbar />
-            <div className="flex pt-16">
-              <Sidebar isExpanded={isSidebarExpanded} setIsExpanded={setIsSidebarExpanded} />
-              <div className={`flex-1 transition-all duration-300 ${isSidebarExpanded ? 'ml-64' : 'ml-20'}`}>
+            <Navbar onMenuClick={() => setIsMobileSidebarOpen(true)} />
+            <div className="flex pt-14 sm:pt-16">
+              <Sidebar 
+                isExpanded={isSidebarExpanded} 
+                setIsExpanded={setIsSidebarExpanded}
+                isMobileOpen={isMobileSidebarOpen}
+                setIsMobileOpen={setIsMobileSidebarOpen}
+              />
+              <div className={`flex-1 transition-all duration-300 ${isSidebarExpanded ? 'lg:ml-64' : 'lg:ml-20'}`}>
                 <Routes>
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/tuitions" element={<AllTuitions />} />

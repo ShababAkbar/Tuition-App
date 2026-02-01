@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { Home, LogOut, User, Shield } from 'lucide-react';
+import { Home, LogOut, User, Shield, Menu, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { signOut } from '@/lib/auth';
 import { useState, useEffect } from 'react';
@@ -7,11 +7,16 @@ import { supabase } from '@/lib/supabase';
 import { ADMIN_USER_ID } from '@/lib/constants';
 import logo from '@/assets/logo.png';
 
-export default function Navbar() {
+interface NavbarProps {
+  onMenuClick?: () => void;
+}
+
+export default function Navbar({ onMenuClick }: NavbarProps) {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isSigningOut, setIsSigningOut] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const checkAdmin = async () => {
@@ -42,38 +47,48 @@ export default function Navbar() {
 
   return (
     <nav className="bg-white shadow-md fixed top-0 left-0 right-0 z-50">
-      <div className="px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          <Link to="/" className="flex items-center space-x-2">
-            <img src={logo} alt="ApnaTuition" className="h-12" />
-            <span className="text-2xl font-bold">
+      <div className="px-3 sm:px-4 lg:px-6">
+        <div className="flex justify-between items-center h-14 sm:h-16">
+          {/* Mobile Menu Button */}
+          <button
+            onClick={onMenuClick}
+            className="lg:hidden p-2 rounded-md text-gray-700 hover:bg-gray-100"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+
+          {/* Logo */}
+          <Link to="/" className="flex items-center space-x-1 sm:space-x-2">
+            <img src={logo} alt="ApnaTuition" className="h-8 sm:h-10" />
+            <span className="text-lg sm:text-xl lg:text-2xl font-bold">
               <span className="text-gray-900">Apna</span>
               <span className="text-blue-600">Tuition</span>
             </span>
           </Link>
 
-          <div className="flex space-x-4">
+          {/* Desktop Navigation */}
+          <div className="hidden lg:flex space-x-3">
             {isAdmin && (
               <Link
                 to="/admin-dashboard"
-                className="flex items-center px-4 py-2 rounded-lg font-medium text-white bg-purple-600 hover:bg-purple-700 transition-colors"
+                className="flex items-center px-3 py-2 rounded-lg font-medium text-white bg-purple-600 hover:bg-purple-700 transition-colors"
               >
-                <Shield className="w-5 h-5 mr-2" />
-                Admin Panel
+                <Shield className="w-4 h-4 mr-2" />
+                Admin
               </Link>
             )}
             <Link
               to="/dashboard"
-              className="flex items-center px-4 py-2 rounded-lg font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors"
+              className="flex items-center px-3 py-2 rounded-lg font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors"
             >
-              <Home className="w-5 h-5 mr-2" />
+              <Home className="w-4 h-4 mr-2" />
               Home
             </Link>
             <Link
               to="/profile"
-              className="flex items-center px-4 py-2 rounded-lg font-medium text-gray-700 hover:bg-gray-100 transition-colors border border-gray-300"
+              className="flex items-center px-3 py-2 rounded-lg font-medium text-gray-700 hover:bg-gray-100 transition-colors border border-gray-300"
             >
-              <User className="w-5 h-5 mr-2" />
+              <User className="w-4 h-4 mr-2" />
               Profile
             </Link>
             <button
@@ -85,6 +100,11 @@ export default function Navbar() {
               {isSigningOut ? 'Signing out...' : 'Sign out'}
             </button>
           </div>
+
+          {/* Mobile Profile Button */}
+          <Link to="/profile" className="lg:hidden p-2 rounded-full bg-gray-100">
+            <User className="w-5 h-5 text-gray-700" />
+          </Link>
         </div>
       </div>
     </nav>
