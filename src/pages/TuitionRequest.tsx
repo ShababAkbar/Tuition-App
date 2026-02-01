@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { GraduationCap, MessageCircle } from "lucide-react";
+import { getReferralCode } from "@/lib/referral";
 
 const TuitionRequest = () => {
   const navigate = useNavigate();
@@ -47,6 +48,9 @@ const TuitionRequest = () => {
 
     try {
       const { data: { user } } = await supabase.auth.getUser();
+      
+      // Get referral code if exists
+      const referralCode = getReferralCode();
 
       const { error } = await supabase.from("tuition_requests").insert({
         user_id: user?.id || null,
@@ -62,6 +66,7 @@ const TuitionRequest = () => {
         mode_of_tuition: formData.modeOfTuition,
         fee: formData.fee,
         additional_comments: formData.additionalComments,
+        referral_code: referralCode, // Add referral tracking
         status: "pending",
       });
 
