@@ -31,21 +31,13 @@ export default function Sidebar({ isExpanded, setIsExpanded, isMobileOpen, setIs
 
       {/* Sidebar */}
       <div
-        className={`bg-white shadow-lg fixed left-0 top-14 sm:top-16 bottom-0 transition-all duration-300 z-40 ${
+        className={`bg-white shadow-lg fixed left-0 top-14 sm:top-16 bottom-16 sm:bottom-0 transition-all duration-300 z-40 ${
           isMobileOpen ? 'translate-x-0' : '-translate-x-full'
-        } lg:translate-x-0 ${
-          isExpanded ? 'w-64' : 'w-20'
+        } lg:translate-x-0 w-64 lg:w-20 ${
+          isExpanded ? 'lg:w-64' : ''
         }`}
       >
         <div className="flex flex-col h-full">
-          {/* Mobile Close Button */}
-          <button
-            onClick={() => setIsMobileOpen(false)}
-            className="lg:hidden absolute right-4 top-4 p-2 rounded-md text-gray-500 hover:bg-gray-100"
-          >
-            <X className="w-5 h-5" />
-          </button>
-
           {/* Desktop Toggle Button */}
           <button
             onClick={() => setIsExpanded(!isExpanded)}
@@ -54,7 +46,7 @@ export default function Sidebar({ isExpanded, setIsExpanded, isMobileOpen, setIs
             {isExpanded ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
           </button>
 
-          <nav className="flex-1 p-3 sm:p-4 space-y-2 mt-12 lg:mt-0">
+          <nav className="flex-1 p-4 space-y-2">
             {menuItems.map((item) => (
               <Link
                 key={item.path}
@@ -67,8 +59,7 @@ export default function Sidebar({ isExpanded, setIsExpanded, isMobileOpen, setIs
                 }`}
               >
                 <item.icon className="w-5 h-5 flex-shrink-0" />
-                <span className="font-medium lg:hidden">{item.label}</span>
-                {isExpanded && <span className="hidden lg:inline font-medium">{item.label}</span>}
+                <span className="font-medium">{item.label}</span>
               </Link>
             ))}
           </nav>

@@ -77,7 +77,7 @@ function App() {
                 isMobileOpen={isMobileSidebarOpen}
                 setIsMobileOpen={setIsMobileSidebarOpen}
               />
-              <div className={`flex-1 transition-all duration-300 ${isSidebarExpanded ? 'lg:ml-64' : 'lg:ml-20'}`}>
+              <div className={`flex-1 transition-all duration-300 pb-16 lg:pb-0 ${isSidebarExpanded ? 'lg:ml-64' : 'lg:ml-20'}`}>
                 <Routes>
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/tuitions" element={<AllTuitions />} />

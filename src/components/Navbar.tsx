@@ -1,5 +1,5 @@
-import { Link, useNavigate } from 'react-router-dom';
-import { Home, LogOut, User, Shield, Menu, X } from 'lucide-react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Home, LogOut, User, Shield, Menu, BookOpen, Briefcase } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { signOut } from '@/lib/auth';
 import { useState, useEffect } from 'react';
@@ -57,8 +57,8 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
             <Menu className="w-5 h-5" />
           </button>
 
-          {/* Logo */}
-          <Link to="/" className="flex items-center space-x-1 sm:space-x-2">
+          {/* Logo - Left aligned */}
+          <Link to="/dashboard" className="flex items-center space-x-1 sm:space-x-2 flex-1 lg:flex-none">
             <img src={logo} alt="ApnaTuition" className="h-8 sm:h-10" />
             <span className="text-lg sm:text-xl lg:text-2xl font-bold">
               <span className="text-gray-900">Apna</span>
@@ -107,6 +107,44 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
           </Link>
         </div>
       </div>
+
+      {/* Mobile Bottom Navigation */}
+      <MobileBottomNav />
     </nav>
+  );
+}
+
+// Mobile Bottom Navigation Component
+function MobileBottomNav() {
+  const location = useLocation();
+  
+  const isActive = (path: string) => location.pathname === path;
+  
+  const navItems = [
+    { path: '/dashboard', icon: Home, label: 'Home' },
+    { path: '/my-tuitions', icon: Briefcase, label: 'My Tuitions' },
+    { path: '/tuitions', icon: BookOpen, label: 'Tuitions' },
+    { path: '/profile', icon: User, label: 'Profile' },
+  ];
+
+  return (
+    <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
+      <div className="flex justify-around items-center h-16">
+        {navItems.map((item) => (
+          <Link
+            key={item.path}
+            to={item.path}
+            className={`flex flex-col items-center justify-center flex-1 h-full space-y-1 ${
+              isActive(item.path)
+                ? 'text-blue-600'
+                : 'text-gray-600'
+            }`}
+          >
+            <item.icon className="w-5 h-5" />
+            <span className="text-xs font-medium">{item.label}</span>
+          </Link>
+        ))}
+      </div>
+    </div>
   );
 }
