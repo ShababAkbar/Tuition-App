@@ -59,7 +59,8 @@ export default function Sidebar({ isExpanded, setIsExpanded, isMobileOpen, setIs
                 }`}
               >
                 <item.icon className="w-5 h-5 flex-shrink-0" />
-                <span className="font-medium">{item.label}</span>
+                <span className="font-medium lg:hidden">{item.label}</span>
+                {isExpanded && <span className="hidden lg:inline font-medium">{item.label}</span>}
               </Link>
             ))}
           </nav>

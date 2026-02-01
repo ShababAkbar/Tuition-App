@@ -58,7 +58,7 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
           </button>
 
           {/* Logo - Left aligned */}
-          <Link to="/dashboard" className="flex items-center space-x-1 sm:space-x-2 flex-1 lg:flex-none">
+          <Link to="/" className="flex items-center space-x-1 sm:space-x-2 flex-1 lg:flex-none">
             <img src={logo} alt="ApnaTuition" className="h-8 sm:h-10" />
             <span className="text-lg sm:text-xl lg:text-2xl font-bold">
               <span className="text-gray-900">Apna</span>
