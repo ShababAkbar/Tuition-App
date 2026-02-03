@@ -25,8 +25,8 @@ const Blog = () => {
   const [blogs] = useState<BlogPost[]>([
     {
       id: "1",
-      title: "How to Choose the Right Tutor for Your Child in Pakistan",
-      excerpt: "Finding the perfect tutor can transform your child's academic journey. Learn the essential factors to consider when selecting a home tutor...",
+      title: "How to Find the Best Home Tutor in Pakistan",
+      excerpt: "Finding the right home tutor for your child can make a significant difference in their academic performance and confidence. With the rise of online platforms like Apna Tuition, connecting with qualified tutors in Karachi, Lahore, Islamabad, and other cities has become easier than ever.",
       content: `Finding the right tutor for your child is one of the most important decisions you'll make as a parent. In Pakistan's competitive educational landscape, a good tutor can be the difference between struggling with subjects and achieving academic excellence.
 
 Understanding Your Child's Needs
@@ -75,13 +75,155 @@ While budget is important, remember that quality education is an investment in y
 
 At ApnaTuition, we carefully vet all our tutors to ensure they meet high standards of qualification, experience, and teaching excellence. Our platform makes it easy to find, compare, and connect with the perfect tutor for your child's unique needs.`,
       image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600",
-      author: "Dr. Sarah Ahmed",
-      date: "Jan 20, 2026",
+      author: "Shabab Akbar",
+      date: "Feb 1, 2026",
       category: "Education Tips",
-      slug: "how-to-choose-right-tutor"
+      slug: "how-to-find-best-home-tutor-pakistan"
     },
     {
       id: "2",
+      title: "Online vs Home Tuition: Which is Better for Your Child?",
+      excerpt: "The education landscape has evolved dramatically, especially after the pandemic. Parents now have two main options: traditional home tuition where a tutor visits your home, or online tuition conducted via video calls. Both methods have their advantages and drawbacks.",
+      content: `The education landscape has evolved dramatically, especially after the pandemic. Parents now have two main options: traditional home tuition where a tutor visits your home, or online tuition conducted via video calls. Both methods have their advantages and drawbacks. This guide will help you decide which option is best for your child's learning style and circumstances.
+
+Understanding Home Tuition
+
+Home tuition involves a qualified tutor visiting your home to provide customized instruction. Advantages include face-to-face interaction that builds stronger teacher-student relationships, better focus with fewer digital distractions, hands-on learning with physical materials, immediate feedback on posture and problem-solving, personalized attention based on body language, and no technical issues.
+
+However, disadvantages include higher costs due to travel expenses, limited tutor options restricted to your locality, scheduling constraints from traffic and weather, safety concerns about allowing strangers in your home, and geographic limitations in smaller cities.
+
+Understanding Online Tuition
+
+Online tuition provides instruction via video calls from anywhere. Advantages include access to top tutors from across Pakistan, cost-effectiveness (20-30% cheaper), flexible scheduling, digital resources like shared screens and PDFs, recorded sessions for review, safe and convenient learning, and no commute time.
+
+Disadvantages include internet dependency, screen fatigue, potential distractions from apps, limited hands-on activities, and technical skills requirements.
+
+Which Option for Different Scenarios?
+
+Choose home tuition if your child is in primary classes needing physical presence, preparing for board exams requiring extensive practice, struggles with focus during online classes, needs subjects like Mathematics benefiting from physical problem-solving, has unreliable internet, or learns better face-to-face.
+
+Choose online tuition if you're looking for specialized tutors (O/A-Level, IELTS, SAT), have budget limitations, live in cities with fewer qualified tutors, need flexible convenient timings, your child is comfortable with technology, or you want access to expert tutors across Pakistan.
+
+Hybrid Approach
+
+Many families adopt a hybrid model: weekly home tuition for core subjects (2-3 times/week), online tuition for supplementary subjects, and online doubt-clearing between home sessions. This maximizes benefits while minimizing costs.
+
+Apna Tuition offers both options! Whether you need a home tutor in Karachi, Lahore, Islamabad, or prefer online tuition from anywhere in Pakistan, you can find qualified tutors on our platform.`,
+      image: "https://images.unsplash.com/photo-1588196749597-9ff075ee6b5b?w=600",
+      author: "Shabab Akbar",
+      date: "Jan 30, 2026",
+      category: "Online Learning",
+      slug: "online-vs-home-tuition-comparison"
+    },
+    {
+      id: "3",
+      title: "Top Tips for Board Exam Preparation with Home Tutors",
+      excerpt: "Board exams (Matric and FSc) are critical milestones in every Pakistani student's academic journey. These exams determine university admissions and future career paths. While school education provides the foundation, personalized guidance from an experienced home tutor can make the difference.",
+      content: `Board exams (Matric and FSc) are critical milestones in every Pakistani student's academic journey. These exams determine university admissions and future career paths. While school education provides the foundation, personalized guidance from an experienced home tutor can make the difference between average scores and exceptional results.
+
+Why Home Tutors for Board Exams?
+
+Home tutors provide personalized attention, targeted weak area improvement, flexible pace, past paper practice, stress management, and time management skills. Start early, at least 6 months before exams. The Matric and FSc syllabi are extensive, and rushing leads to surface-level understanding.
+
+Choose a Tutor with Board Exam Experience
+
+Look for 3+ years of experience preparing students for Matric/FSc, track record of students scoring 80%+, familiarity with your specific board (Lahore Board, Karachi Board, Rawalpindi Board), and subject specialization. Ask about their student success rates, past papers provision, and time management strategies.
+
+Focus on High-Weightage Topics
+
+Not all chapters carry equal marks. Smart students focus more on high-weightage areas. For Matric: Mathematics (Trigonometry, Algebra, Geometry carry 60%+ marks), Physics (Electricity, Magnetism, Heat), Chemistry (Chemical Bonding, Acids & Bases, Organic Chemistry), Biology (Cell Biology, Genetics, Human Systems), and English (Comprehension, Essay Writing, Grammar).
+
+For FSc: Mathematics (Calculus, Trigonometry, Vectors carry 70%+ marks), Physics (Electromagnetism, Modern Physics, Thermodynamics), Chemistry (Organic Chemistry, Physical Chemistry), and Biology (Molecular Biology, Genetics, Ecology).
+
+Practice Past Papers
+
+40-50% of questions repeat in similar forms. Start with chapter-wise questions 6 months before, attempt complete timed papers 3 months before, and do 2-3 past papers per week for each subject 1 month before exams. Tutors should provide 10 years of past papers, mark using official schemes, and explain common mistakes.
+
+Master Exam Writing Techniques
+
+Common mistakes include poor handwriting, not following official format, incomplete answers from poor time management, and not attempting all questions. Tutors should guide practice writing, essay structure, examiner expectations, and handwriting improvement.
+
+At Apna Tuition, find experienced board exam tutors in Karachi, Lahore, Islamabad, Rawalpindi, Faisalabad, Multan, and other cities. Browse verified profiles, check qualifications, and request a trial session today!`,
+      image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=600",
+      author: "Shabab Akbar",
+      date: "Jan 28, 2026",
+      category: "Exam Preparation",
+      slug: "board-exam-preparation-tips-home-tutors"
+    },
+    {
+      id: "4",
+      title: "Benefits of Personalized Home Tuition in Major Pakistani Cities",
+      excerpt: "As education becomes increasingly competitive in Pakistan, parents are turning to personalized home tuition to give their children an academic edge. Unlike crowded classrooms where teachers must cater to 40-50 students, home tuition provides one-on-one attention.",
+      content: `As education becomes increasingly competitive in Pakistan, parents are turning to personalized home tuition to give their children an academic edge. Unlike crowded classrooms where teachers must cater to 40-50 students, home tuition provides one-on-one attention tailored to each child's unique learning needs.
+
+Key Benefits of Personalized Home Tuition
+
+Customized Learning Experience: Tutors dedicate 100% focus to your child with no distractions, questions answered immediately, and learning pace adjusted to understanding. Every child learns differently - visual learners benefit from diagrams, auditory learners from discussions, and kinesthetic learners from hands-on activities. Personalized tutors adapt accordingly.
+
+Flexible Scheduling: Choose timings that work for your family (evening, weekend, early morning), reschedule when needed, adjust session duration, and plan intensive sessions before exams. No commute time saves 1-2 hours daily.
+
+Improved Academic Performance: Tutors identify specific knowledge gaps and provide targeted improvement. Studies show students with personalized tuition typically improve grades by 15-30%. Real results from Pakistani students show significant score improvements.
+
+Builds Confidence and Reduces Anxiety: Safe learning environment with no fear of being mocked, students feel comfortable making mistakes, positive reinforcement boosts self-esteem, and personalized encouragement builds growth mindset. For shy or introverted students, home tuition provides a judgment-free space.
+
+Convenient and Safe: Study in familiar comfortable environment, access to own books and materials, no heavy bags to carry, parents can monitor sessions, no travel risks, and verified tutors through platforms like Apna Tuition. Especially important in Pakistan with traffic congestion and safety concerns.
+
+Better Communication with Parents: Direct communication between parents and tutors, weekly progress reports, immediate feedback, and collaborative goal-setting. Parents can occasionally sit in sessions and receive exam preparation strategies.
+
+City-Specific Benefits
+
+Karachi: Save 2-3 hours daily in traffic, tutors available in all major areas (Gulshan, Defence, Clifton, Nazimabad), safe learning at home.
+
+Lahore: Large pool of qualified tutors including university professors, competitive rates, strong O/A-Level tutor availability, cultural preference for home-based education.
+
+Islamabad/Rawalpindi: Access to tutors from top universities (NUST, COMSATS, QAU), growing demand for IELTS/SAT/international curriculum, twin cities provide wider selection, safer environment with less traffic.
+
+Use Apna Tuition to browse verified tutor profiles, check qualifications and experience, read reviews, filter by subject/location/fee, and request tutors for free!`,
+      image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600",
+      author: "Shabab Akbar",
+      date: "Jan 25, 2026",
+      category: "Education Tips",
+      slug: "benefits-personalized-home-tuition-pakistan"
+    },
+    {
+      id: "5",
+      title: "How to Choose the Right Tutor for O-Level and A-Level Students",
+      excerpt: "O-Level and A-Level qualifications from Cambridge International are among the most respected educational certifications globally. However, these exams require a fundamentally different approach compared to Pakistani board exams.",
+      content: `O-Level and A-Level qualifications from Cambridge International are among the most respected educational certifications globally. However, these exams require a fundamentally different approach compared to Pakistani board exams (Matric/FSc). The teaching methodology, exam patterns, grading criteria, and depth of understanding required are significantly different.
+
+Why O/A-Level Students Need Specialized Tutors
+
+Different Exam Philosophy: Pakistani boards focus on memorization and reproducing textbook content with predictable questions and lenient marking. Cambridge O/A-Levels emphasize conceptual understanding, application, critical thinking, analysis, and strict marking schemes requiring specific keywords.
+
+A tutor experienced only in board exams may not understand Cambridge assessment objectives, teaching methodologies, or marking criteria. You need a tutor who has studied or taught O/A-Levels extensively, understands Cambridge marking schemes, can teach concepts (not just facts), and prepares students for application-based questions.
+
+Essential Qualities of an O/A-Level Tutor
+
+Educational Background: Best qualifications include completing O/A-Levels themselves plus relevant degree, BS/MS in the subject from reputable university, and international qualifications or Cambridge training certification.
+
+Teaching Experience: Minimum 2-3 years teaching O/A-Level students. Ask about years of teaching, number of students prepared, typical grade outcomes, and experience with CIE and Edexcel boards. Green flags include 5+ years of teaching, students consistently achieving A/A* grades, and experience with multiple exam boards.
+
+Subject Specialization: O/A-Level subjects are vast and complex. Tutors should specialize in specific subjects rather than claiming to teach everything. Sciences require strong conceptual foundation and practical skills, Mathematics needs Pure Math/Statistics/Mechanics knowledge, English requires essay writing and literary analysis, and Business subjects need real-world application.
+
+Familiarity with Cambridge Resources: Qualified tutors should have Cambridge Past Papers (10+ years), Mark Schemes and Examiner Reports, updated Syllabus documents, Specimen papers, and recommended textbooks.
+
+Finding Tutors in Major Cities
+
+Karachi: Largest pool of Cambridge-certified tutors, many international school teachers, rates PKR 8,000-25,000/month per subject.
+
+Lahore: Growing Cambridge market, access to tutors from Aitchison/LGS/Beaconhouse, rates PKR 7,000-20,000/month.
+
+Islamabad: High-quality tutors from international schools, many with UK/US education background, rates PKR 8,000-22,000/month.
+
+Use Apna Tuition to filter by O/A-Level qualification, read reviews from Cambridge students, verify educational background, compare rates, and find tutors in your neighborhood!`,
+      image: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=600",
+      author: "Shabab Akbar",
+      date: "Jan 22, 2026",
+      category: "Exam Preparation",
+      slug: "choose-right-tutor-o-level-a-level"
+    },
+    {
+      id: "6",
       title: "O-Level & A-Level Exam Preparation: A Complete Guide for Pakistani Students",
       excerpt: "Comprehensive strategies to excel in Cambridge O-Level and A-Level examinations, from study techniques to exam day tips...",
       content: `The Cambridge O-Level and A-Level examinations represent a critical milestone in every student's academic journey in Pakistan. These internationally recognized qualifications open doors to top universities worldwide, but success requires strategic preparation and dedication.
@@ -184,13 +326,13 @@ Exam stress is real. Take care of your mental health by:
 
 Remember, these exams are important, but they don't define your worth. With proper preparation, strategic studying, and expert support, you can achieve your target grades and unlock exciting opportunities for your future.`,
       image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=600",
-      author: "Prof. Ahmed Raza",
+      author: "Shabab Akbar",
       date: "Jan 15, 2026",
       category: "Exam Preparation",
       slug: "olevel-alevel-exam-guide"
     },
     {
-      id: "3",
+      id: "7",
       title: "The Rise of Online Tutoring in Pakistan: Benefits and Best Practices",
       excerpt: "Online tutoring has revolutionized education in Pakistan. Discover how virtual learning is making quality education accessible to everyone...",
       content: `The COVID-19 pandemic accelerated a transformation that was already underway – the shift from traditional classroom-based tutoring to online learning. In Pakistan, online tutoring has emerged as a powerful solution that addresses many challenges of our educational system.
@@ -292,7 +434,7 @@ Online tutoring isn't replacing traditional education – it's complementing it.
 
 Whether you're preparing for board exams, need help with daily homework, or want to excel in competitive examinations, online tutoring offers a flexible, effective, and affordable solution. The future of education is digital, and that future is already here.`,
       image: "https://images.unsplash.com/photo-1588196749597-9ff075ee6b5b?w=600",
-      author: "Fatima Khan",
+      author: "Shabab Akbar",
       date: "Jan 10, 2026",
       category: "Online Learning",
       slug: "rise-of-online-tutoring-pakistan"
