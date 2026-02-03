@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
 import Landing from './pages/Landing';
+import CityLanding from './pages/CityLanding';
 import Auth from './pages/Auth';
 import ResetPassword from './pages/ResetPassword';
 import TutorOnboarding from './pages/TutorOnboarding';
@@ -52,6 +53,9 @@ function App() {
         
         {/* Tuition Request Success Page - No sidebar/navbar */}
         <Route path="/tuition-request-success" element={<TuitionRequestSuccess />} />
+        
+        {/* City Landing Pages - No sidebar/navbar */}
+        <Route path="/tuition-in-:city" element={<CityLanding />} />
         
         {/* Public Pages - No sidebar/navbar */}
         <Route path="/about" element={<AboutUs />} />
