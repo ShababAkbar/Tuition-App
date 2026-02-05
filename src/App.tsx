@@ -54,8 +54,19 @@ function App() {
         {/* Tuition Request Success Page - No sidebar/navbar */}
         <Route path="/tuition-request-success" element={<TuitionRequestSuccess />} />
         
-        {/* City Landing Pages - No sidebar/navbar */}
-        <Route path="/tuition-in-:city" element={<CityLanding />} />
+        {/* City Landing Pages - No sidebar/navbar - MUST BE BEFORE /tuition/:id */}
+        <Route path="/tuition-in-karachi" element={<CityLanding />} />
+        <Route path="/tuition-in-lahore" element={<CityLanding />} />
+        <Route path="/tuition-in-islamabad" element={<CityLanding />} />
+        <Route path="/tuition-in-rawalpindi" element={<CityLanding />} />
+        <Route path="/tuition-in-faisalabad" element={<CityLanding />} />
+        <Route path="/tuition-in-multan" element={<CityLanding />} />
+        <Route path="/tuition-in-gujranwala" element={<CityLanding />} />
+        <Route path="/tuition-in-sheikhupura" element={<CityLanding />} />
+        <Route path="/tuition-in-sialkot" element={<CityLanding />} />
+        <Route path="/tuition-in-peshawar" element={<CityLanding />} />
+        <Route path="/tuition-in-quetta" element={<CityLanding />} />
+        <Route path="/tuition-in-hyderabad" element={<CityLanding />} />
         
         {/* Public Pages - No sidebar/navbar */}
         <Route path="/about" element={<AboutUs />} />
