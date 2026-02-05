@@ -86,11 +86,13 @@ export default function CityLanding() {
           `Find the best home tutors in ${cityInfo.name}. Apna Tuition connects you with qualified and verified teachers for all subjects. 100% Free platform. Get tutors in ${cityInfo.areas}.`
         );
       }
+    } else {
+      // Redirect to home if city not found
+      navigate('/');
     }
-  }, [cityInfo]);
+  }, [cityInfo, navigate]);
 
   if (!cityInfo) {
-    navigate('/');
     return null;
   }
 
