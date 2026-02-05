@@ -71,7 +71,7 @@ function App() {
         <Route path="/admin/tuition-applications/:tuitionId" element={<TuitionApplications />} />
         
         {/* Dashboard routes with sidebar and navbar */}
-        <Route path="/*" element={
+        <Route path="/dashboard" element={
           <div className="min-h-screen bg-gray-50">
             <Navbar onMenuClick={() => setIsMobileSidebarOpen(true)} />
             <div className="flex pt-14 sm:pt-16">
@@ -82,13 +82,71 @@ function App() {
                 setIsMobileOpen={setIsMobileSidebarOpen}
               />
               <div className={`flex-1 transition-all duration-300 pb-16 lg:pb-0 ${isSidebarExpanded ? 'lg:ml-64' : 'lg:ml-20'}`}>
-                <Routes>
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/tuitions" element={<AllTuitions />} />
-                  <Route path="/my-tuitions" element={<MyTuitions />} />
-                  <Route path="/tuition/:id" element={<TuitionDetails />} />
-                  <Route path="/profile" element={<Profile />} />
-                </Routes>
+                <Dashboard />
+              </div>
+            </div>
+          </div>
+        } />
+        <Route path="/tuitions" element={
+          <div className="min-h-screen bg-gray-50">
+            <Navbar onMenuClick={() => setIsMobileSidebarOpen(true)} />
+            <div className="flex pt-14 sm:pt-16">
+              <Sidebar 
+                isExpanded={isSidebarExpanded} 
+                setIsExpanded={setIsSidebarExpanded}
+                isMobileOpen={isMobileSidebarOpen}
+                setIsMobileOpen={setIsMobileSidebarOpen}
+              />
+              <div className={`flex-1 transition-all duration-300 pb-16 lg:pb-0 ${isSidebarExpanded ? 'lg:ml-64' : 'lg:ml-20'}`}>
+                <AllTuitions />
+              </div>
+            </div>
+          </div>
+        } />
+        <Route path="/my-tuitions" element={
+          <div className="min-h-screen bg-gray-50">
+            <Navbar onMenuClick={() => setIsMobileSidebarOpen(true)} />
+            <div className="flex pt-14 sm:pt-16">
+              <Sidebar 
+                isExpanded={isSidebarExpanded} 
+                setIsExpanded={setIsSidebarExpanded}
+                isMobileOpen={isMobileSidebarOpen}
+                setIsMobileOpen={setIsMobileSidebarOpen}
+              />
+              <div className={`flex-1 transition-all duration-300 pb-16 lg:pb-0 ${isSidebarExpanded ? 'lg:ml-64' : 'lg:ml-20'}`}>
+                <MyTuitions />
+              </div>
+            </div>
+          </div>
+        } />
+        <Route path="/tuition/:id" element={
+          <div className="min-h-screen bg-gray-50">
+            <Navbar onMenuClick={() => setIsMobileSidebarOpen(true)} />
+            <div className="flex pt-14 sm:pt-16">
+              <Sidebar 
+                isExpanded={isSidebarExpanded} 
+                setIsExpanded={setIsSidebarExpanded}
+                isMobileOpen={isMobileSidebarOpen}
+                setIsMobileOpen={setIsMobileSidebarOpen}
+              />
+              <div className={`flex-1 transition-all duration-300 pb-16 lg:pb-0 ${isSidebarExpanded ? 'lg:ml-64' : 'lg:ml-20'}`}>
+                <TuitionDetails />
+              </div>
+            </div>
+          </div>
+        } />
+        <Route path="/profile" element={
+          <div className="min-h-screen bg-gray-50">
+            <Navbar onMenuClick={() => setIsMobileSidebarOpen(true)} />
+            <div className="flex pt-14 sm:pt-16">
+              <Sidebar 
+                isExpanded={isSidebarExpanded} 
+                setIsExpanded={setIsSidebarExpanded}
+                isMobileOpen={isMobileSidebarOpen}
+                setIsMobileOpen={setIsMobileSidebarOpen}
+              />
+              <div className={`flex-1 transition-all duration-300 pb-16 lg:pb-0 ${isSidebarExpanded ? 'lg:ml-64' : 'lg:ml-20'}`}>
+                <Profile />
               </div>
             </div>
           </div>
