@@ -2,9 +2,41 @@ import { useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import LandingNavbar from "@/components/landing/LandingNavbar";
 import LandingFooter from "@/components/landing/LandingFooter";
+import SEOHead from "@/components/SEOHead";
 
 const FAQ = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How do I find a tutor?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Click on 'Find a Tutor' button, fill out the tuition request form with your requirements (subject, class, location, etc.), and we'll connect you with qualified tutors in your area."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is there any fee for students to use Apna Tuition?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No, our platform is completely free for students and parents. You only pay the agreed tuition fee directly to the tutor."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How are tutors verified?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "All tutors go through a strict verification process including document verification (CNIC, educational certificates), background checks, and profile reviews before approval."
+        }
+      }
+    ]
+  };
 
   const faqs = [
     {
@@ -90,6 +122,13 @@ const FAQ = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      <SEOHead
+        title="FAQ - Frequently Asked Questions About Home Tuition"
+        description="Get answers to common questions about finding home tutors, online tuition, tutor verification, fees, and how Apna Tuition works for students and tutors in Pakistan."
+        canonical="https://apna-tuition.com/faq"
+        keywords="home tuition faq, tutor questions, online tuition pakistan, how to find tutor"
+        schema={faqSchema}
+      />
       <LandingNavbar />
 
       {/* Hero Section */}

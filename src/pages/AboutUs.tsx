@@ -3,12 +3,19 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import LandingNavbar from "@/components/landing/LandingNavbar";
 import LandingFooter from "@/components/landing/LandingFooter";
+import SEOHead from "@/components/SEOHead";
 
 const AboutUs = () => {
   const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-white">
+      <SEOHead
+        title="About Us - Pakistan's Trusted Home Tuition Platform"
+        description="Learn about Apna Tuition, Pakistan's leading platform connecting students with qualified home tutors. Our mission is making quality education accessible across Karachi, Lahore, Islamabad and all Pakistan."
+        canonical="https://apna-tuition.com/about"
+        keywords="about apna tuition, home tuition platform pakistan, verified tutors pakistan, education services"
+      />
       <LandingNavbar />
       
       {/* Hero Section */}

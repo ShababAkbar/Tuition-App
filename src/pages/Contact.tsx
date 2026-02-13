@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import LandingNavbar from "@/components/landing/LandingNavbar";
 import LandingFooter from "@/components/landing/LandingFooter";
+import SEOHead from "@/components/SEOHead";
 
 const Contact = () => {
   const { toast } = useToast();
@@ -17,6 +18,22 @@ const Contact = () => {
     phone: "",
     message: ""
   });
+
+  const contactSchema = {
+    "@context": "https://schema.org",
+    "@type": "ContactPage",
+    "mainEntity": {
+      "@type": "Organization",
+      "name": "Apna Tuition",
+      "email": "support@apna-tuition.com",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "Customer Service",
+        "areaServed": "PK",
+        "availableLanguage": ["English", "Urdu"]
+      }
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,6 +77,13 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      <SEOHead
+        title="Contact Us - Get in Touch with Apna Tuition"
+        description="Have questions about home tuition services? Contact Apna Tuition for support. We're here to help students and tutors across Pakistan. Reach us via email or phone.\"
+        canonical="https://apna-tuition.com/contact"
+        keywords="contact apna tuition, tuition support pakistan, customer service, help desk"
+        schema={contactSchema}
+      />
       <LandingNavbar />
 
       {/* Hero Section */}

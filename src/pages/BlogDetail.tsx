@@ -3,6 +3,7 @@ import { Calendar, User, ArrowLeft, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import LandingNavbar from "@/components/landing/LandingNavbar";
 import LandingFooter from "@/components/landing/LandingFooter";
+import SEOHead from "@/components/SEOHead";
 import { useState, useEffect } from "react";
 import { allBlogs, BlogPost } from "@/lib/blogData";
 
@@ -22,6 +23,11 @@ const BlogDetail = () => {
   if (!blog) {
     return (
       <div className="min-h-screen bg-white">
+        <SEOHead
+          title="Blog Not Found"
+          description="The requested blog article could not be found."
+          canonical="https://apna-tuition.com/blog"
+        />
         <LandingNavbar />
         <div className="container mx-auto px-4 py-20 text-center">
           <h1 className="text-3xl font-bold text-gray-900 mb-4">Blog not found</h1>
@@ -31,6 +37,32 @@ const BlogDetail = () => {
       </div>
     );
   }
+
+  // Schema for blog article
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": blog.title,
+    "description": blog.excerpt,
+    "image": blog.image,
+    "datePublished": blog.date,
+    "author": {
+      "@type": "Person",
+      "name": blog.author
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Apna Tuition",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://apna-tuition.com/favicon.png"
+      }
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": `https://apna-tuition.com/blog/${blog.slug}`
+    }
+  };
 
   // Format content with proper HTML styling
   const formatContent = (content: string) => {
@@ -61,6 +93,15 @@ const BlogDetail = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      <SEOHead
+        title={blog.title}
+        description={blog.excerpt}
+        canonical={`https://apna-tuition.com/blog/${blog.slug}`}
+        keywords={`${blog.category.toLowerCase()}, education pakistan, ${blog.title.toLowerCase()}`}
+        ogImage={blog.image}
+        ogType="article"
+        schema={articleSchema}
+      />
       <LandingNavbar />
 
       {/* Back Button */}

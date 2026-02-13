@@ -3,6 +3,7 @@ import { Calendar, User, ArrowRight, Search } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import LandingNavbar from "@/components/landing/LandingNavbar";
 import LandingFooter from "@/components/landing/LandingFooter";
+import SEOHead from "@/components/SEOHead";
 import { Card, CardContent } from "@/components/ui/card";
 import { allBlogs, BlogPost } from "@/lib/blogData";
 
@@ -12,8 +13,31 @@ const Blog = () => {
   // Professional blog posts
   const [blogs] = useState<BlogPost[]>(allBlogs);
 
+  const blogSchema = {
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    "name": "Apna Tuition Blog",
+    "description": "Educational insights, tips, and resources for students and parents",
+    "url": "https://apna-tuition.com/blog",
+    "publisher": {
+      "@type": "Organization",
+      "name": "Apna Tuition",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://apna-tuition.com/favicon.png"
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white">
+      <SEOHead
+        title="Education Blog - Tips & Resources for Students"
+        description="Expert educational insights, home tuition tips, study guides, and learning resources for students and parents in Pakistan. Latest articles on O-Level, A-Level, and board exam preparation."
+        canonical="https://apna-tuition.com/blog"
+        keywords="education blog pakistan, home tuition tips, study guides, board exam preparation, o level tips, a level resources, tutoring advice"
+        schema={blogSchema}
+      />
       <LandingNavbar />
 
       {/* Hero Section */}

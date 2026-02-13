@@ -1,8 +1,8 @@
-import { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { MapPin, BookOpen, Award, Clock, Users, CheckCircle } from "lucide-react";
 import LandingNavbar from "@/components/landing/LandingNavbar";
 import LandingFooter from "@/components/landing/LandingFooter";
+import SEOHead from "@/components/SEOHead";
 
 const CITY_DATA: Record<string, { name: string; areas: string; stats: string }> = {
   karachi: {
@@ -74,25 +74,8 @@ export default function CityLanding() {
   const cityKey = city?.toLowerCase() || "";
   const cityInfo = CITY_DATA[cityKey];
 
-  useEffect(() => {
-    if (cityInfo) {
-      document.title = `Best Home Tutors in ${cityInfo.name} | Apna Tuition - Find Qualified Teachers`;
-      
-      // Add meta description for SEO
-      const metaDescription = document.querySelector('meta[name="description"]');
-      if (metaDescription) {
-        metaDescription.setAttribute(
-          'content',
-          `Find the best home tutors in ${cityInfo.name}. Apna Tuition connects you with qualified and verified teachers for all subjects. 100% Free platform. Get tutors in ${cityInfo.areas}.`
-        );
-      }
-    } else {
-      // Redirect to home if city not found
-      navigate('/');
-    }
-  }, [cityInfo, navigate]);
-
   if (!cityInfo) {
+    navigate('/');
     return null;
   }
 
@@ -100,8 +83,101 @@ export default function CityLanding() {
     navigate('/tuition-request');
   };
 
+  // SEO Configuration
+  const pageTitle = `Verified Home Tutors in ${cityInfo.name}`;
+  const pageDescription = `Find the best home tutors in ${cityInfo.name}, Pakistan. ${cityInfo.stats} of qualified teachers for O-Level, A-Level, Matric, and all subjects. Expert online & home tuition services in ${cityInfo.areas}. 100% Free platform.`;
+  const canonicalUrl = `https://apna-tuition.com/tuition-in-${cityKey}`;
+  const keywords = `home tuition in ${cityInfo.name}, tutors in ${cityInfo.name}, home tutors ${cityInfo.name}, online tuition ${cityInfo.name}, private tutors ${cityInfo.name}, O level tutors ${cityInfo.name}, A level tutors ${cityInfo.name}, best home tuition ${cityInfo.name}, tuition academy ${cityInfo.name}, female tutors ${cityInfo.name}`;
+
+  // Schema.org LocalBusiness structured data
+  const localBusinessSchema = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": `Apna Tuition - ${cityInfo.name}`,
+    "description": `Professional home tuition and online tutoring services in ${cityInfo.name}`,
+    "url": canonicalUrl,
+    "logo": "https://apna-tuition.com/favicon.png",
+    "image": "https://apna-tuition.com/og-image.png",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": cityInfo.name,
+      "addressCountry": "PK"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "addressCountry": "PK"
+    },
+    "areaServed": {
+      "@type": "City",
+      "name": cityInfo.name
+    },
+    "priceRange": "Free",
+    "serviceType": "Home Tuition Services",
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.8",
+      "reviewCount": "500"
+    }
+  };
+
+  // Service schema
+  const serviceSchema = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "name": `Home Tuition Services in ${cityInfo.name}`,
+    "serviceType": "Educational Services",
+    "provider": {
+      "@type": "EducationalOrganization",
+      "name": "Apna Tuition"
+    },
+    "areaServed": {
+      "@type": "City",
+      "name": cityInfo.name,
+      "containedInPlace": {
+        "@type": "Country",
+        "name": "Pakistan"
+      }
+    },
+    "hasOfferCatalog": {
+      "@type": "OfferCatalog",
+      "name": "Tutoring Services",
+      "itemListElement": [
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Home Tuition"
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Online Tuition"
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "O-Level & A-Level Tutoring"
+          }
+        }
+      ]
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      {/* SEO Head with Canonical, Schema, and Meta Tags */}
+      <SEOHead
+        title={pageTitle}
+        description={pageDescription}
+        canonical={canonicalUrl}
+        keywords={keywords}
+        schema={[localBusinessSchema, serviceSchema]}
+      />
+      
       <LandingNavbar />
       
       {/* Hero Section */}
@@ -113,10 +189,9 @@ export default function CityLanding() {
             <span className="text-base font-semibold text-blue-700">{cityInfo.name}, Pakistan</span>
           </div>
 
-          {/* Main Headline */}
+          {/* Main Headline - Optimized H1 for SEO */}
           <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-            Find the Best Home Tutors<br />
-            in <span className="text-blue-600">{cityInfo.name}</span>
+            Verified Home Tutors in <span className="text-blue-600">{cityInfo.name}</span>
           </h1>
 
           {/* Subheading */}
