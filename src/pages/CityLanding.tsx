@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { MapPin, BookOpen, Award, Clock, Users, CheckCircle } from "lucide-react";
 import LandingNavbar from "@/components/landing/LandingNavbar";
@@ -74,14 +75,21 @@ export default function CityLanding() {
   const cityKey = city?.toLowerCase() || "";
   const cityInfo = CITY_DATA[cityKey];
 
-  if (!cityInfo) {
-    navigate('/');
-    return null;
-  }
+  // Handle invalid city - navigate in useEffect
+  useEffect(() => {
+    if (!cityInfo) {
+      navigate('/');
+    }
+  }, [cityInfo, navigate]);
 
   const handleGetTutor = () => {
     navigate('/tuition-request');
   };
+
+  // Loading state while redirecting
+  if (!cityInfo) {
+    return null;
+  }
 
   // SEO Configuration
   const pageTitle = `Verified Home Tutors in ${cityInfo.name}`;
