@@ -114,7 +114,7 @@ const LandingHero = () => {
 
             {/* USP Badges */}
             <div className="flex flex-wrap gap-3">
-              <div className="flex items-center gap-1.5 rounded-full bg-green-200 text-green-600 px-4 py-2 text-sm font-semibold shadow-md">
+              <div className="flex items-center gap-1.5 rounded-full bg-blue-200 text-blue-600 px-4 py-2 text-sm font-semibold shadow-md">
                 <Gift className="h-4 w-4" />
                 100% Free for Parents
               </div>
@@ -122,11 +122,11 @@ const LandingHero = () => {
                 <ShieldCheck className="h-4 w-4" />
                 Verified Tutors
               </div>
-              <div className="flex items-center gap-1.5 rounded-full bg-purple-300 text-purple-600 px-4 py-2 text-sm font-semibold shadow-md">
+              <div className="flex items-center gap-1.5 rounded-full bg-blue-200 text-blue-600 px-4 py-2 text-sm font-semibold shadow-md">
                 <Clock className="h-4 w-4" />
                 2–3 Free Demo Classes
               </div>
-              <div className="flex items-center gap-1.5 rounded-full bg-yellow-200 text-yellow-700 px-4 py-2 text-sm font-semibold shadow-md">
+              <div className="flex items-center gap-1.5 rounded-full bg-blue-200 text-blue-600 px-4 py-2 text-sm font-semibold shadow-md">
                 <Star className="h-4 w-4" />
                 No Commission
               </div>
