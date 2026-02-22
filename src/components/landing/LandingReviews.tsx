@@ -167,7 +167,7 @@ const LandingReviews = () => {
                 <span className="text-gray-500 text-sm">on Google</span>
               </div>
               <div className="rounded-full bg-green-100 px-5 py-2.5 text-sm font-semibold text-green-700 border border-green-300 shadow-md">
-                5,000+ Happy Families
+                100+ Happy Families
               </div>
             </div>
           </div>
