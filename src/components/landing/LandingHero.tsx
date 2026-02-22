@@ -65,7 +65,7 @@ const LandingHero = () => {
   };
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-blue-200 via-purple-200 to-pink-100 pt-4 pb-16 lg:pt-5 lg:pb-24">
+    <section className="relative overflow-hidden bg-gradient-to-br from-blue-200 via-purple-100 to-blue-200 pt-4 pb-16 lg:pt-5 lg:pb-24">
       {/* Decorative wave shapes */}
       <div className="absolute top-0 right w-full h-full overflow-hidden pointer-events-none">
         <svg className="absolute top-0 right w-[120%] h-full" viewBox="0 0 1440 900" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
@@ -114,19 +114,19 @@ const LandingHero = () => {
 
             {/* USP Badges */}
             <div className="flex flex-wrap gap-3">
-              <div className="flex items-center gap-1.5 rounded-full bg-green-500 text-white px-4 py-2 text-sm font-semibold shadow-md">
+              <div className="flex items-center gap-1.5 rounded-full bg-green-200 text-green-600 px-4 py-2 text-sm font-semibold shadow-md">
                 <Gift className="h-4 w-4" />
                 100% Free for Parents
               </div>
-              <div className="flex items-center gap-1.5 rounded-full bg-blue-500 text-white px-4 py-2 text-sm font-semibold shadow-md">
+              <div className="flex items-center gap-1.5 rounded-full bg-blue-200 text-blue-600 px-4 py-2 text-sm font-semibold shadow-md">
                 <ShieldCheck className="h-4 w-4" />
                 Verified Tutors
               </div>
-              <div className="flex items-center gap-1.5 rounded-full bg-purple-500 text-white px-4 py-2 text-sm font-semibold shadow-md">
+              <div className="flex items-center gap-1.5 rounded-full bg-purple-300 text-purple-600 px-4 py-2 text-sm font-semibold shadow-md">
                 <Clock className="h-4 w-4" />
                 2–3 Free Demo Classes
               </div>
-              <div className="flex items-center gap-1.5 rounded-full bg-yellow-500 text-white px-4 py-2 text-sm font-semibold shadow-md">
+              <div className="flex items-center gap-1.5 rounded-full bg-yellow-200 text-yellow-700 px-4 py-2 text-sm font-semibold shadow-md">
                 <Star className="h-4 w-4" />
                 No Commission
               </div>
