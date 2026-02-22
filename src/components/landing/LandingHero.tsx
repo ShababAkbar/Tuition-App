@@ -95,12 +95,8 @@ const LandingHero = () => {
         <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-16">
           {/* Left Content */}
           <div className="space-y-6 lg:space-y-8">
-            <div className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-4 py-2 text-sm font-medium shadow-lg">
-              <Users className="h-4 w-4" />
-              Rated 4.5+ on Google · Trusted by 5,000+ Families
-            </div>
-
-            <h1 className="text-4xl font-extrabold leading-tight text-gray-900 sm:text-5xl lg:text-6xl">
+            
+            <h1 className="text-4xl font-extrabold leading-tight text-gray-900 sm:text-5xl lg:text-6xl pt-6 lg:pt-8">
               Trusted Home &{" "}
               <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 Online Tuition
