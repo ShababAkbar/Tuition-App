@@ -68,10 +68,10 @@ const LandingHero = () => {
     <section className="relative overflow-hidden bg-gradient-to-br from-blue-200 via-purple-100 to-blue-200 pt-4 pb-16 lg:pt-5 lg:pb-24">
       {/* Decorative wave shapes */}
       <div className="absolute top-0 right w-full h-full overflow-hidden pointer-events-none">
-        <svg className="absolute top-0 right w-[120%] h-full" viewBox="0 0 1440 900" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-          <path d="M1440 0C1440 0 1200 100 900 200C600 300 400 400 200 500C0 600 -100 700 -100 900V0H1440Z" fill="url(#gradient1)" fillOpacity="0.3"/>
-          <path d="M1440 100C1440 100 1150 200 850 280C550 360 350 420 150 520C-50 620 -100 750 -100 900V0H1440Z" fill="url(#gradient2)" fillOpacity="0.25"/>
-          <path d="M1440 50C1440 50 1100 150 800 250C500 350 300 450 100 580C-100 710 -100 800 -100 900V0H1440Z" fill="url(#gradient3)" fillOpacity="0.2"/>
+        <svg className="absolute top-0  right w-[110%] h-[70%]" viewBox="0 0 1440 900" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+          <path d="M1440 0C1440 0 1200 100 900 200C600 300 400 400 200 500C0 600 -100 700 -100 900V0H1440Z" fill="url(#gradient1)" fillOpacity="0.15"/>
+          <path d="M1440 100C1440 100 1150 200 850 280C550 360 350 420 150 520C-50 620 -100 750 -100 900V0H1440Z" fill="url(#gradient2)" fillOpacity="0.15"/>
+          <path d="M1440 50C1440 50 1100 150 800 250C500 350 300 450 100 580C-100 710 -100 800 -100 900V0H1440Z" fill="url(#gradient3)" fillOpacity="0.1"/>
           <defs>
             <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#3b82f6" />
