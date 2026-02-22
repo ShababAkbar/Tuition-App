@@ -2,22 +2,26 @@
  * Bulk Email Script - Send email to all registered tutors
  * 
  * SETUP:
- * 1. Replace SUPABASE_SERVICE_ROLE_KEY below with your actual service role key
- *    (Supabase Dashboard → Settings → API → service_role key)
- * 2. Replace RESEND_API_KEY below with your actual Resend API key
+ * 1. Create a .env file in the root directory
+ * 2. Add these variables:
+ *    VITE_SUPABASE_URL=your_supabase_url
+ *    SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+ *    RESEND_API_KEY=your_resend_api_key
  * 3. Edit the EMAIL_SUBJECT and EMAIL_BODY below with your message
  * 4. Set DRY_RUN = true first to preview without sending
  * 5. Run: node bulk-email-tutors.js
  */
 
+import 'dotenv/config';
+
 // ============================================================
 // CONFIGURATION - EDIT THESE VALUES
 // ============================================================
 
-const SUPABASE_URL = 'https://gitwgsoasegtfumkrizz.supabase.co';
-const SUPABASE_SERVICE_ROLE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdpdHdnc29hc2VndGZ1bWtyaXp6Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MDk5NjE0OCwiZXhwIjoyMDc2NTcyMTQ4fQ.0G0XEvvABJW77eoKEjsSOoCOVKmvMorsQ2NxndwsJpI';
+const SUPABASE_URL = process.env.VITE_SUPABASE_URL;
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-const RESEND_API_KEY = 're_XyfptZGD_MrarB3ywykn7nexHHBQj96sB';
+const RESEND_API_KEY = process.env.RESEND_API_KEY;
 
 const FROM_EMAIL = 'Apna Tuition <noreply@apna-tuition.com>';
 // Must be a verified domain in your Resend dashboard

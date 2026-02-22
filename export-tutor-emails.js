@@ -1,13 +1,19 @@
 /**
  * Export all approved tutor emails to CSV
- * Run: node export-tutor-emails.js
- * Then import the CSV into Zoho Campaigns
+ * 
+ * SETUP:
+ * 1. Create a .env file with:
+ *    VITE_SUPABASE_URL=your_supabase_url
+ *    SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+ * 2. Run: node export-tutor-emails.js
+ * 3. Import the generated CSV into Zoho Campaigns
  */
 
+import 'dotenv/config';
 import { writeFileSync } from 'fs';
 
-const SUPABASE_URL = 'https://gitwgsoasegtfumkrizz.supabase.co';
-const SUPABASE_SERVICE_ROLE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdpdHdnc29hc2VndGZ1bWtyaXp6Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MDk5NjE0OCwiZXhwIjoyMDc2NTcyMTQ4fQ.0G0XEvvABJW77eoKEjsSOoCOVKmvMorsQ2NxndwsJpI';
+const SUPABASE_URL = process.env.VITE_SUPABASE_URL;
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 const response = await fetch(
   `${SUPABASE_URL}/rest/v1/tutors?status=eq.approved&email=not.is.null&select=email,first_name,last_name`,
