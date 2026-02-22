@@ -1,4 +1,4 @@
-import { Facebook, Instagram, Twitter, Mail, Phone, MapPin } from "lucide-react";
+import { Facebook, Instagram, Linkedin, Mail, Phone, MapPin } from "lucide-react";
 import logo from "@/assets/logo.png";
 
 const LandingFooter = () => {
@@ -19,14 +19,14 @@ const LandingFooter = () => {
               Making high-quality home tuition and online tutoring accessible, affordable, and results-driven.
             </p>
             <div className="flex gap-4">
-              <a href="#" className="text-gray-400 hover:text-blue-600 transition-colors">
+              <a href="https://www.facebook.com/profile.php?id=61588056663361" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-blue-600 transition-colors">
                 <Facebook className="h-5 w-5" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-blue-600 transition-colors">
+              <a href="https://www.instagram.com/apnatuition_official?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-blue-600 transition-colors">
                 <Instagram className="h-5 w-5" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-blue-600 transition-colors">
-                <Twitter className="h-5 w-5" />
+              <a href="https://www.linkedin.com/company/apna-tuition/?viewAsMember=true" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-blue-600 transition-colors">
+                <Linkedin className="h-5 w-5" />
               </a>
             </div>
           </div>

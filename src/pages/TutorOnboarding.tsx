@@ -15,6 +15,7 @@ import { SUBJECT_CATEGORIES, PAKISTAN_CITIES, PAKISTAN_STATES, VALIDATION_PATTER
 const TutorOnboarding = () => {
   const [step, setStep] = useState(1);
   const [userId, setUserId] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -289,10 +290,7 @@ const TutorOnboarding = () => {
     if (!userId) return;
 
     try {
-      toast({
-        title: "Uploading...",
-        description: "Please wait while we upload your documents.",
-      });
+      setIsSubmitting(true);
 
       // Upload CNIC images
       let cnicFrontUrl = null;
@@ -379,6 +377,8 @@ const TutorOnboarding = () => {
 
       if (error) throw error;
 
+      setIsSubmitting(false);
+      
       toast({
         title: "Success!",
         description: "Your tutor profile has been submitted for review.",
@@ -386,6 +386,8 @@ const TutorOnboarding = () => {
 
       navigate("/dashboard");
     } catch (error: any) {
+      setIsSubmitting(false);
+      
       toast({
         title: "Error",
         description: error.message,
@@ -951,6 +953,54 @@ const TutorOnboarding = () => {
           ))}
         </div>
       </div>
+
+      {/* Uploading Modal Overlay */}
+      {isSubmitting && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 text-center animate-in fade-in zoom-in duration-300">
+            {/* Animated Spinner */}
+            <div className="mb-6 flex justify-center">
+              <div className="relative">
+                <div className="w-20 h-20 border-8 border-blue-200 rounded-full"></div>
+                <div className="w-20 h-20 border-8 border-blue-600 border-t-transparent rounded-full animate-spin absolute top-0 left-0"></div>
+              </div>
+            </div>
+            
+            {/* Warning Message */}
+            <div className="mb-6">
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                ⏳ Uploading Your Documents
+              </h3>
+              <div className="bg-yellow-50 border-2 border-yellow-400 rounded-lg p-4 mb-4">
+                <p className="text-lg font-semibold text-yellow-800 mb-2">
+                  ⚠️ IMPORTANT WARNING
+                </p>
+                <p className="text-sm text-yellow-900 leading-relaxed">
+                  This process takes <strong>30-60 seconds</strong> to upload your documents and save your profile.
+                </p>
+              </div>
+              <div className="bg-red-50 border-2 border-red-400 rounded-lg p-4">
+                <p className="text-sm font-bold text-red-800 mb-1">
+                  ❌ DO NOT CLOSE THIS SCREEN
+                </p>
+                <p className="text-sm text-red-700">
+                  If you close or navigate away, your submission will be lost and your profile will NOT be submitted.
+                </p>
+              </div>
+            </div>
+
+            {/* Progress Indicator */}
+            <div className="text-gray-600 text-sm">
+              <p className="font-medium">Please wait while we process your application...</p>
+              <div className="mt-3 flex items-center justify-center gap-1">
+                <span className="inline-block w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                <span className="inline-block w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                <span className="inline-block w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

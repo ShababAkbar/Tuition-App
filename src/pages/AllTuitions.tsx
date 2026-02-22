@@ -98,7 +98,7 @@ export default function AllTuitions() {
         {/* Grid Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-[240px_1fr] gap-4 lg:gap-6">
           {/* Sidebar */}
-          <div className="bg-white rounded-xl shadow-md p-4 lg:p-5 sticky top-6 h-fit">
+          <div className="bg-white rounded-xl shadow-md p-4 lg:p-5 lg:sticky lg:top-6 h-fit">
             {/* Cities */}
             <div className="mb-5">
               <h3 className="text-base font-semibold text-gray-900 mb-3">Cities</h3>

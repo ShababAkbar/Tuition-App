@@ -83,7 +83,7 @@ serve(async (req) => {
                 <li>Prepare your teaching materials</li>
               </ul>
               
-              <a href="${Deno.env.get('APP_URL') || 'http://localhost:5173'}/dashboard" class="button">Go to Dashboard</a>
+              <a href="${Deno.env.get('APP_URL') || 'https://apna-tuition.com'}/dashboard" class="button">Go to Dashboard</a>
               
               <p>We wish you all the best for this tuition assignment!</p>
               
@@ -139,7 +139,7 @@ serve(async (req) => {
                 <li>Keep your profile updated with latest qualifications</li>
               </ul>
               
-              <a href="${Deno.env.get('APP_URL') || 'http://localhost:5173'}/tuitions" class="button">View Available Tuitions</a>
+              <a href="${Deno.env.get('APP_URL') || 'https://apna-tuition.com'}/tuitions" class="button">View Available Tuitions</a>
               
               <p>We appreciate your interest in ApnaTuition and look forward to connecting you with suitable opportunities in the future.</p>
               

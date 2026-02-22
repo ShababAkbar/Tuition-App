@@ -16,7 +16,6 @@ const LandingStats = () => {
     rating: "4.5+",
     legacy: "1 Month",
   });
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchStats();
@@ -43,8 +42,6 @@ const LandingStats = () => {
     } catch (error) {
       console.error('Error fetching stats:', error);
       // Keep default values on error
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -72,31 +69,34 @@ const LandingStats = () => {
   ];
 
   return (
-    <section className="bg-gray-50 py-16 lg:py-24">
+    <section className="bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 py-12 lg:py-16">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-gray-600 mb-4">
+          <span className="inline-block bg-blue-500 text-white text-sm font-semibold px-4 py-1.5 rounded-full mb-4 uppercase tracking-wide shadow-md">
             Our Story in Numbers
+          </span>
+          <h2 className="text-3xl font-extrabold text-gray-900 mb-4 lg:text-4xl">
+            Impact That Speaks for Itself
           </h2>
-          <p className="text-lg text-gray-900 max-w-3xl mx-auto">
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             We aim to make high-quality home tuition and online tutoring accessible, affordable, and results-driven.
           </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-8 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-6 md:gap-8 lg:grid-cols-4">
           {statsData.map((stat, index) => (
             <div
               key={index}
-              className="flex flex-col items-center gap-4 rounded-2xl bg-white p-8 shadow-sm transition-all hover:shadow-md hover:scale-105"
+              className="flex flex-col items-center gap-4 rounded-2xl bg-white p-6 md:p-8 border border-blue-200 shadow-lg hover:shadow-2xl hover:border-blue-400 hover:-translate-y-1 transition-all duration-300"
             >
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-blue-100">
-                <stat.icon className="h-8 w-8 text-blue-600" />
+              <div className="flex h-14 w-14 md:h-16 md:w-16 items-center justify-center rounded-full bg-blue-100 group-hover:scale-110 transition-transform">
+                <stat.icon className="h-7 w-7 md:h-8 md:w-8 text-blue-600" />
               </div>
               <div className="text-center">
-                <div className="text-4xl font-extrabold text-blue-600 mb-2">
+                <div className="text-3xl md:text-4xl font-extrabold text-blue-600 mb-2">
                   {stat.value}
                 </div>
-                <div className="text-sm font-medium text-gray-900">
+                <div className="text-sm font-medium text-gray-700">
                   {stat.label}
                 </div>
               </div>
