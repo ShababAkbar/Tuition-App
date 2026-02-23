@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import { verifyAuthenticatedUser } from "@/lib/auth";
+import { trackMetaConversion } from "@/lib/metaConversion";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -376,6 +377,22 @@ const TutorOnboarding = () => {
       });
 
       if (error) throw error;
+
+      // Track Meta Conversion (Tutor Registration)
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user?.email) {
+          await trackMetaConversion({
+            email: user.email,
+            phone: formData.contact,
+            eventId: `tutor_reg_${userId}_${Date.now()}`, // Unique event ID for deduplication
+          });
+          console.log('✅ Meta conversion tracked successfully');
+        }
+      } catch (metaError) {
+        // Don't fail the registration if Meta tracking fails
+        console.error('Meta conversion tracking failed:', metaError);
+      }
 
       setIsSubmitting(false);
       
