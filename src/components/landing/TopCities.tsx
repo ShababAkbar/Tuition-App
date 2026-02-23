@@ -105,11 +105,11 @@ const TopCities = () => {
   };
 
   return (
-    <section className="py-12 lg:py-16 bg-gradient-to-br from-teal-100 via-cyan-100 to-blue-100">
+    <section className="py-12 lg:py-16 bg-gradient-to-br from-blue-50 to-purple-50">
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-10">
-          <span className="inline-block bg-gradient-to-r from-teal-500 to-cyan-500 text-white text-sm font-semibold px-4 py-1.5 rounded-full mb-4 uppercase tracking-wide shadow-md">
+          <span className="inline-block bg-blue-600 text-white text-sm font-semibold px-4 py-1.5 rounded-full mb-4 uppercase tracking-wide shadow-md">
             Our Reach
           </span>
           <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-3">

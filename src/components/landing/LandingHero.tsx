@@ -65,32 +65,7 @@ const LandingHero = () => {
   };
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-blue-200 via-purple-100 to-blue-200 pt-4 pb-16 lg:pt-5 lg:pb-24">
-      {/* Decorative wave shapes */}
-      <div className="absolute top-0 right w-full h-full overflow-hidden pointer-events-none">
-        <svg className="absolute top-0  right w-[110%] h-[70%]" viewBox="0 0 1440 900" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-          <path d="M1440 0C1440 0 1200 100 900 200C600 300 400 400 200 500C0 600 -100 700 -100 900V0H1440Z" fill="url(#gradient1)" fillOpacity="0.15"/>
-          <path d="M1440 100C1440 100 1150 200 850 280C550 360 350 420 150 520C-50 620 -100 750 -100 900V0H1440Z" fill="url(#gradient2)" fillOpacity="0.15"/>
-          <path d="M1440 50C1440 50 1100 150 800 250C500 350 300 450 100 580C-100 710 -100 800 -100 900V0H1440Z" fill="url(#gradient3)" fillOpacity="0.1"/>
-          <defs>
-            <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#3b82f6" />
-              <stop offset="50%" stopColor="#8b5cf6" />
-              <stop offset="100%" stopColor="#6366f1" />
-            </linearGradient>
-            <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#60a5fa" />
-              <stop offset="100%" stopColor="#a78bfa" />
-            </linearGradient>
-            <linearGradient id="gradient3" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#93c5fd" />
-              <stop offset="50%" stopColor="#c4b5fd" />
-              <stop offset="100%" stopColor="#818cf8" />
-            </linearGradient>
-          </defs>
-        </svg>
-      </div>
-
+    <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-purple-50 pt-4 pb-16 lg:pt-5 lg:pb-24">
       <div className="container mx-auto px-4 lg:px-8 relative z-10">
         <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-16">
           {/* Left Content */}
@@ -98,7 +73,7 @@ const LandingHero = () => {
             
             <h1 className="text-4xl font-extrabold leading-tight text-gray-900 sm:text-5xl lg:text-6xl pt-6 lg:pt-8">
               Trusted Home &{" "}
-              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <span className="text-blue-600">
                 Online Tuition
               </span>{" "}
               Services

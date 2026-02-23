@@ -69,7 +69,7 @@ const LandingStats = () => {
   ];
 
   return (
-    <section className="bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 py-12 lg:py-16">
+    <section className="bg-gradient-to-br from-purple-50 to-blue-50 py-12 lg:py-16">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <span className="inline-block bg-blue-500 text-white text-sm font-semibold px-4 py-1.5 rounded-full mb-4 uppercase tracking-wide shadow-md">

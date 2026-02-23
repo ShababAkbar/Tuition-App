@@ -72,16 +72,16 @@ const WhyChooseUs = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="py-12 lg:py-16 bg-gradient-to-br from-pink-100 via-purple-100 to-blue-100">
+    <section className="py-12 lg:py-16 bg-gradient-to-br from-purple-50 to-blue-50">
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <div className="text-center mb-14">
-          <span className="inline-block bg-gradient-to-r from-purple-500 to-pink-500 text-white text-sm font-semibold px-4 py-1.5 rounded-full mb-4 uppercase tracking-wide shadow-md">
+          <span className="inline-block bg-blue-600 text-white text-sm font-semibold px-4 py-1.5 rounded-full mb-4 uppercase tracking-wide shadow-md">
             Why Us
           </span>
           <h2 className="text-3xl font-extrabold text-gray-900 mb-4 lg:text-4xl">
             Why Choose{" "}
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <span className="text-blue-600">
               Apna Tuition?
             </span>
           </h2>
@@ -107,7 +107,7 @@ const WhyChooseUs = () => {
         </div>
 
         {/* Bottom CTA Banner */}
-        <div className="mt-14 rounded-2xl bg-gradient-to-r from-blue-600 via-blue-500 to-purple-600 p-8 text-center text-white shadow-2xl">
+        <div className="mt-14 rounded-2xl bg-blue-600 p-8 text-center text-white shadow-2xl">
           <h3 className="text-2xl font-extrabold mb-3">
             Ready to Find the Perfect Tutor?
           </h3>

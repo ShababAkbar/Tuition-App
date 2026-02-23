@@ -148,11 +148,11 @@ const LandingReviews = () => {
   return (
     <>
       {/* ── Text Reviews ── */}
-      <section className="bg-gradient-to-br from-yellow-100 via-orange-100 to-pink-100 py-12 lg:py-16">
+      <section className="bg-gradient-to-br from-purple-50 to-blue-50 py-12 lg:py-16">
         <div className="container mx-auto px-4">
           {/* Header */}
           <div className="text-center mb-12">
-            <span className="inline-block bg-gradient-to-r from-yellow-500 to-orange-500 text-white text-sm font-semibold px-4 py-1.5 rounded-full mb-4 uppercase tracking-wide shadow-md">
+            <span className="inline-block bg-blue-600 text-white text-sm font-semibold px-4 py-1.5 rounded-full mb-4 uppercase tracking-wide shadow-md">
               Reviews
             </span>
             <h2 className="text-3xl font-extrabold text-gray-900 mb-4 lg:text-4xl">
@@ -218,10 +218,10 @@ const LandingReviews = () => {
       </section>
 
       {/* ── Video Testimonials ── */}
-      <section className="bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 py-12 lg:py-16">
+      <section className="bg-gradient-to-br from-blue-50 to-purple-50 py-12 lg:py-16">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <span className="inline-block bg-gradient-to-r from-purple-500 to-pink-500 text-white text-sm font-semibold px-4 py-1.5 rounded-full mb-4 uppercase tracking-wide shadow-md">
+            <span className="inline-block bg-blue-600 text-white text-sm font-semibold px-4 py-1.5 rounded-full mb-4 uppercase tracking-wide shadow-md">
               Video Stories
             </span>
             <h2 className="text-3xl font-extrabold text-gray-900 mb-4 lg:text-4xl">

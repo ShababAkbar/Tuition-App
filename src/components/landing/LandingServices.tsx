@@ -61,10 +61,10 @@ const LandingServices = () => {
   const navigate = useNavigate();
 
   return (
-    <section id="services" className="py-12 lg:py-16 bg-gradient-to-br from-indigo-100 via-blue-100 to-purple-100">
+    <section id="services" className="py-12 lg:py-16 bg-gradient-to-br from-blue-50 to-purple-50">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <span className="inline-block bg-gradient-to-r from-blue-500 to-purple-500 text-white text-sm font-semibold px-4 py-1.5 rounded-full mb-4 uppercase tracking-wide shadow-md">
+          <span className="inline-block bg-blue-600 text-white text-sm font-semibold px-4 py-1.5 rounded-full mb-4 uppercase tracking-wide shadow-md">
             What We Offer
           </span>
           <h2 className="text-3xl font-extrabold text-gray-900 mb-4 lg:text-4xl">
