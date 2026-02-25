@@ -46,6 +46,12 @@ export const signIn = async (email: string, password: string) => {
   });
 
   if (error) {
+    // Handle specific error cases with user-friendly messages
+    if (error.message === 'Invalid login credentials') {
+      throw new Error('User does not exist or has not been verified. Please sign up or check your credentials.');
+    } else if (error.message === 'Email not confirmed') {
+      throw new Error('Email is not verified yet. Please verify your email first. We have sent you a verification email to your inbox.');
+    }
     throw error;
   }
 

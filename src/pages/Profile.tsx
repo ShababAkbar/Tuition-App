@@ -14,7 +14,10 @@ const AVAILABLE_SUBJECTS = [
 export default function Profile() {
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const cnicFrontRef = useRef<HTMLInputElement>(null);
+  const cnicBackRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState({
+    // Basic fields (for approved users)
     name: '',
     email: '',
     phone: '',
@@ -25,8 +28,27 @@ export default function Profile() {
     biography: '',
     profile_picture: '',
     education: [] as any[],
+    
+    // Additional onboarding fields (for rejected/incomplete profiles)
+    firstName: '',
+    lastName: '',
+    fatherName: '',
+    contact: '',
+    otherContact: '',
+    state: '',
+    postalCode: '',
+    cnicFrontUrl: '',
+    cnicBackUrl: '',
+    cnicFrontFile: null as File | null,
+    cnicBackFile: null as File | null,
+    workExperience: [] as Array<{ position: string; company: string; description: string; duration: string }>,
+    experienceYears: 0,
+    courses: [] as string[],
+    shortAbout: '',
+    detailedDescription: '',
   });
   const [existingTutor, setExistingTutor] = useState<Tutor | null>(null);
+  const [rejectedProfile, setRejectedProfile] = useState<any>(null);
   const [profileStatus, setProfileStatus] = useState<'incomplete' | 'pending' | 'approved' | 'rejected'>('incomplete');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -96,23 +118,71 @@ export default function Profile() {
           biography: data.short_bio || data.biography || '',
           profile_picture: data.profile_picture || '',
           education: data.education || [],
+          // Initialize onboarding fields as empty for approved users
+          firstName: '',
+          lastName: '',
+          fatherName: '',
+          contact: '',
+          otherContact: '',
+          state: '',
+          postalCode: '',
+          cnicFrontUrl: '',
+          cnicBackUrl: '',
+          cnicFrontFile: null,
+          cnicBackFile: null,
+          workExperience: [],
+          experienceYears: 0,
+          courses: [],
+          shortAbout: '',
+          detailedDescription: '',
         });
       } else {
-        // Check if profile exists in new_tutor table (pending)
+        // Check if profile exists in new_tutor table (pending/rejected)
         const { data: pendingProfile } = await supabase
           .from('new_tutor')
-          .select('status')
+          .select('*')
           .eq('user_id', user.id)
           .maybeSingle();
         
         if (pendingProfile) {
+          setRejectedProfile(pendingProfile);
           setProfileStatus(pendingProfile.status as 'pending' | 'rejected');
+          
+          // Load full data from new_tutor for rejected/pending profiles
+          setFormData({
+            name: `${pendingProfile.first_name || ''} ${pendingProfile.last_name || ''}`.trim(),
+            email: user.email || '',
+            phone: pendingProfile.contact || '',
+            address: pendingProfile.address || '',
+            subjects: [],
+            mode_of_tuition: 'Both',
+            city: pendingProfile.city || '',
+            biography: pendingProfile.short_about || '',
+            profile_picture: '',
+            education: pendingProfile.education || [],
+            // All onboarding fields
+            firstName: pendingProfile.first_name || '',
+            lastName: pendingProfile.last_name || '',
+            fatherName: pendingProfile.father_name || '',
+            contact: pendingProfile.contact || '',
+            otherContact: pendingProfile.other_contact || '',
+            state: pendingProfile.state || '',
+            postalCode: pendingProfile.postal_code || '',
+            cnicFrontUrl: pendingProfile.cnic_front_url || '',
+            cnicBackUrl: pendingProfile.cnic_back_url || '',
+            cnicFrontFile: null,
+            cnicBackFile: null,
+            workExperience: pendingProfile.work_experience || [],
+            experienceYears: pendingProfile.experience_years || 0,
+            courses: pendingProfile.courses || [],
+            shortAbout: pendingProfile.short_about || '',
+            detailedDescription: pendingProfile.detailed_description || '',
+          });
         } else {
           setProfileStatus('incomplete');
+          // No profile yet, set email from auth
+          setFormData(prev => ({ ...prev, email: user.email || '' }));
         }
-        
-        // No profile yet, set email from auth
-        setFormData(prev => ({ ...prev, email: user.email || '' }));
       }
     } catch (err) {
       console.error('Error fetching tutor profile:', err);
@@ -262,10 +332,118 @@ export default function Profile() {
     });
   };
 
+  const handleResubmitProfile = async () => {
+    // Validate required fields for rejected/incomplete profiles
+    if (!formData.firstName.trim() || !formData.lastName.trim() || !formData.contact.trim()) {
+      setError('First name, last name, and contact are required');
+      return;
+    }
+
+    if (!formData.city.trim() || !formData.state.trim() || !formData.address.trim()) {
+      setError('City, state, and address are required');
+      return;
+    }
+
+    try {
+      setSaving(true);
+      setError(null);
+
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('User not authenticated');
+
+      // Upload CNIC files if new ones are selected
+      let cnicFrontUrl = formData.cnicFrontUrl;
+      let cnicBackUrl = formData.cnicBackUrl;
+
+      if (formData.cnicFrontFile) {
+        const fileName = `${user.id}/cnic-front-${Date.now()}.${formData.cnicFrontFile.name.split('.').pop()}`;
+        const { error: uploadError } = await supabase.storage
+          .from('tutor-documents')
+          .upload(fileName, formData.cnicFrontFile);
+        
+        if (uploadError) throw uploadError;
+        cnicFrontUrl = fileName;
+      }
+
+      if (formData.cnicBackFile) {
+        const fileName = `${user.id}/cnic-back-${Date.now()}.${formData.cnicBackFile.name.split('.').pop()}`;
+        const { error: uploadError } = await supabase.storage
+          .from('tutor-documents')
+          .upload(fileName, formData.cnicBackFile);
+        
+        if (uploadError) throw uploadError;
+        cnicBackUrl = fileName;
+      }
+
+      // Upload education result cards if any
+      const updatedEducation = await Promise.all(
+        formData.education.map(async (edu: any) => {
+          if (edu.resultCard && edu.resultCard instanceof File) {
+            const fileName = `${user.id}/result-card-${Date.now()}.${edu.resultCard.name.split('.').pop()}`;
+            const { error: uploadError } = await supabase.storage
+              .from('tutor-documents')
+              .upload(fileName, edu.resultCard);
+            
+            if (uploadError) throw uploadError;
+            return { ...edu, resultCard: fileName };
+          }
+          return edu;
+        })
+      );
+
+      const updateData = {
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        father_name: formData.fatherName,
+        contact: formData.contact,
+        other_contact: formData.otherContact,
+        city: formData.city,
+        state: formData.state,
+        address: formData.address,
+        postal_code: formData.postalCode,
+        cnic_front_url: cnicFrontUrl,
+        cnic_back_url: cnicBackUrl,
+        education: updatedEducation,
+        work_experience: formData.workExperience,
+        experience_years: formData.experienceYears,
+        courses: formData.courses,
+        short_about: formData.shortAbout,
+        detailed_description: formData.detailedDescription,
+        status: 'pending',  // Reset status to pending for re-review
+        updated_at: new Date().toISOString(),
+      };
+
+      const { error } = await supabase
+        .from('new_tutor')
+        .update(updateData)
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+
+      toast({
+        title: 'Profile Resubmitted!',
+        description: 'Your profile has been submitted for review. We will notify you once it is approved.',
+      });
+
+      setProfileStatus('pending');
+      setSuccess(true);
+      setTimeout(() => setSuccess(false), 3000);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to resubmit profile');
+      toast({
+        title: 'Error',
+        description: err instanceof Error ? err.message : 'Failed to resubmit profile',
+        variant: 'destructive',
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Check if profile is pending or incomplete
+    // Check if profile is pending
     if (profileStatus === 'pending') {
       toast({
         title: 'Profile Under Review',
@@ -275,15 +453,12 @@ export default function Profile() {
       return;
     }
 
+    // Handle rejected or incomplete profiles - allow resubmission
     if (profileStatus === 'incomplete' || profileStatus === 'rejected') {
-      toast({
-        title: 'Profile Not Approved',
-        description: 'Your profile is not yet approved. Please complete tutor onboarding first.',
-        variant: 'destructive',
-      });
-      return;
+      return handleResubmitProfile();
     }
 
+    // Handle approved profiles - normal update
     if (!formData.name.trim() || !formData.email.trim() || !formData.phone.trim()) {
       setError('Name, email, and phone are required');
       return;
@@ -415,6 +590,230 @@ export default function Profile() {
             )}
 
             <form onSubmit={handleSubmit}>
+              {/* Show onboarding fields for rejected/incomplete profiles */}
+              {(profileStatus === 'rejected' || profileStatus === 'incomplete') && (
+                <div className="mb-8 bg-yellow-50 border-2 border-yellow-200 rounded-lg p-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                    {profileStatus === 'rejected' ? '⚠️ Profile Rejected - Please Update and Resubmit' : '📝 Complete Your Profile'}
+                  </h3>
+                  <p className="text-sm text-gray-700 mb-6">
+                    {profileStatus === 'rejected' 
+                      ? 'Your profile was rejected. Please review the feedback, update all required fields below, and resubmit for approval.'
+                      : 'Please fill in all required fields to submit your profile for approval.'}
+                  </p>
+
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Personal Information */}
+                    <div className="space-y-4">
+                      <h4 className="font-medium text-gray-900">Personal Information</h4>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          First Name <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.firstName}
+                          onChange={(e) => setFormData({...formData, firstName: e.target.value})}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          placeholder="Enter your first name"
+                          required
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Last Name <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.lastName}
+                          onChange={(e) => setFormData({...formData, lastName: e.target.value})}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          placeholder="Enter your last name"
+                          required
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Father's Name
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.fatherName}
+                          onChange={(e) => setFormData({...formData, fatherName: e.target.value})}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          placeholder="Enter your father's name"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Contact Number <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="tel"
+                          value={formData.contact}
+                          onChange={(e) => setFormData({...formData, contact: e.target.value})}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          placeholder="+92 300 1234567"
+                          required
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Other Contact
+                        </label>
+                        <input
+                          type="tel"
+                          value={formData.otherContact}
+                          onChange={(e) => setFormData({...formData, otherContact: e.target.value})}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          placeholder="Alternative contact number"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Address Information */}
+                    <div className="space-y-4">
+                      <h4 className="font-medium text-gray-900">Address Details</h4>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          City <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.city}
+                          onChange={(e) => setFormData({...formData, city: e.target.value})}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          placeholder="Enter your city"
+                          required
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          State/Province <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.state}
+                          onChange={(e) => setFormData({...formData, state: e.target.value})}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          placeholder="Enter your state/province"
+                          required
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Full Address <span className="text-red-500">*</span>
+                        </label>
+                        <textarea
+                          value={formData.address}
+                          onChange={(e) => setFormData({...formData, address: e.target.value})}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          placeholder="Enter your complete address"
+                          rows={3}
+                          required
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Postal Code
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.postalCode}
+                          onChange={(e) => setFormData({...formData, postalCode: e.target.value})}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          placeholder="Enter postal code"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Years of Experience
+                        </label>
+                        <input
+                          type="number"
+                          value={formData.experienceYears}
+                          onChange={(e) => setFormData({...formData, experienceYears: parseInt(e.target.value) || 0})}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          placeholder="0"
+                          min="0"
+                        />
+                      </div>
+                    </div>
+
+                    {/* CNIC Documents */}
+                    <div className="lg:col-span-2 space-y-4">
+                      <h4 className="font-medium text-gray-900">CNIC Documents</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            CNIC Front
+                          </label>
+                          <input
+                            type="file"
+                            ref={cnicFrontRef}
+                            onChange={(e) => setFormData({...formData, cnicFrontFile: e.target.files?.[0] || null})}
+                            accept="image/*"
+                            className="w-full px-4 py-3 border border-gray-300 rounded-lg"
+                          />
+                          {formData.cnicFrontUrl && <p className="text-xs text-green-600 mt-1">✓ File uploaded</p>}
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            CNIC Back
+                          </label>
+                          <input
+                            type="file"
+                            ref={cnicBackRef}
+                            onChange={(e) => setFormData({...formData, cnicBackFile: e.target.files?.[0] || null})}
+                            accept="image/*"
+                            className="w-full px-4 py-3 border border-gray-300 rounded-lg"
+                          />
+                          {formData.cnicBackUrl && <p className="text-xs text-green-600 mt-1">✓ File uploaded</p>}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* About */}
+                    <div className="lg:col-span-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Short About (Brief Introduction)
+                      </label>
+                      <textarea
+                        value={formData.shortAbout}
+                        onChange={(e) => setFormData({...formData, shortAbout: e.target.value})}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="Brief introduction about yourself..."
+                        rows={3}
+                      />
+                    </div>
+
+                    <div className="lg:col-span-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Detailed Description
+                      </label>
+                      <textarea
+                        value={formData.detailedDescription}
+                        onChange={(e) => setFormData({...formData, detailedDescription: e.target.value})}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="Detailed description of your teaching experience and methodology..."
+                        rows={5}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Regular profile fields for approved users */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
                 <div className="space-y-6">
                   <div>
@@ -643,18 +1042,20 @@ export default function Profile() {
               <div className="flex justify-end">
                 <button
                   type="submit"
-                  disabled={saving || profileStatus !== 'approved'}
+                  disabled={saving || profileStatus === 'pending'}
                   className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-medium py-3 px-8 rounded-lg transition-colors flex items-center"
                 >
                   {saving ? (
                     <>
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                      <div className="animate-spin rounded-full h-5 h-5 border-b-2 border-white mr-2"></div>
                       Saving...
                     </>
                   ) : (
                     <>
                       <Save className="w-5 h-5 mr-2" />
-                      {profileStatus === 'pending' ? 'Profile Under Review' : profileStatus !== 'approved' ? 'Complete Onboarding First' : 'Save Changes'}
+                      {profileStatus === 'pending' ? 'Profile Under Review' : 
+                       profileStatus === 'incomplete' ? 'Submit for Review' :
+                       profileStatus === 'rejected' ? 'Resubmit for Review' : 'Save Changes'}
                     </>
                   )}
                 </button>
