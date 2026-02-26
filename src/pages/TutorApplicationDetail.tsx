@@ -88,38 +88,17 @@ const TutorApplicationDetail = () => {
     if (!application) return;
 
     try {
-      // Update status to approved
+      // Update status to approved - database trigger will auto-create tutors entry
       const { error: updateError } = await supabase
         .from("new_tutor")
-        .update({ status: "approved" })
+        .update({ 
+          status: "approved",
+          reviewed_at: new Date().toISOString(),
+          reviewed_by: ADMIN_USER_ID,
+        })
         .eq("id", application.id);
 
       if (updateError) throw updateError;
-
-      // Insert into tutors table
-      const { error: insertError } = await supabase
-        .from("tutors")
-        .insert({
-          user_id: application.user_id,
-          name: `${application.first_name} ${application.last_name}`,
-          first_name: application.first_name,
-          last_name: application.last_name,
-          email: "", // Will be filled from auth
-          contact: application.contact,
-          phone: application.contact,
-          address: application.address,
-          city: application.city,
-          state: application.state,
-          subjects: application.courses,
-          experience_years: application.experience_years,
-          short_bio: application.short_about,
-          biography: application.detailed_description,
-          education: application.education,
-          work_experience: application.work_experience,
-          status: "approved",
-        });
-
-      if (insertError) throw insertError;
 
       toast({
         title: "Success",
@@ -312,23 +291,47 @@ const TutorApplicationDetail = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <p className="text-sm text-gray-500 mb-2">CNIC Front</p>
+                    <p className="text-sm text-gray-500 mb-3">CNIC Front</p>
                     {application.cnic_front_url ? (
-                      <a href={application.cnic_front_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                        View Document
-                      </a>
+                      <div className="space-y-2">
+                        <img 
+                          src={application.cnic_front_url} 
+                          alt="CNIC Front" 
+                          className="w-full h-auto border-2 border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                        />
+                        <a 
+                          href={application.cnic_front_url} 
+                          target="_blank" 
+                          rel="noopener noreferrer" 
+                          className="text-sm text-blue-600 hover:underline inline-block"
+                        >
+                          Open in new tab
+                        </a>
+                      </div>
                     ) : (
                       <span className="text-red-500">Not uploaded</span>
                     )}
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500 mb-2">CNIC Back</p>
+                    <p className="text-sm text-gray-500 mb-3">CNIC Back</p>
                     {application.cnic_back_url ? (
-                      <a href={application.cnic_back_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                        View Document
-                      </a>
+                      <div className="space-y-2">
+                        <img 
+                          src={application.cnic_back_url} 
+                          alt="CNIC Back" 
+                          className="w-full h-auto border-2 border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                        />
+                        <a 
+                          href={application.cnic_back_url} 
+                          target="_blank" 
+                          rel="noopener noreferrer" 
+                          className="text-sm text-blue-600 hover:underline inline-block"
+                        >
+                          Open in new tab
+                        </a>
+                      </div>
                     ) : (
                       <span className="text-red-500">Not uploaded</span>
                     )}
@@ -347,7 +350,7 @@ const TutorApplicationDetail = () => {
               </CardHeader>
               <CardContent>
                 {application.education && application.education.length > 0 ? (
-                  <div className="space-y-4">
+                  <div className="space-y-6">
                     {application.education.map((edu: any, index: number) => (
                       <div key={index} className="border-l-4 border-blue-500 pl-4 py-2">
                         <h4 className="font-semibold">{edu.degree || <span className="text-red-500">No degree specified</span>}</h4>
@@ -357,9 +360,21 @@ const TutorApplicationDetail = () => {
                           {edu.status && ` • ${edu.status}`}
                         </p>
                         {edu.resultCardUrl && (
-                          <a href={edu.resultCardUrl} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:underline">
-                            View Result Card
-                          </a>
+                          <div className="mt-3 space-y-2">
+                            <img 
+                              src={edu.resultCardUrl} 
+                              alt={`${edu.degree} Result Card`} 
+                              className="w-full max-w-md h-auto border-2 border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                            />
+                            <a 
+                              href={edu.resultCardUrl} 
+                              target="_blank" 
+                              rel="noopener noreferrer" 
+                              className="text-sm text-blue-600 hover:underline inline-block"
+                            >
+                              Open in new tab
+                            </a>
+                          </div>
                         )}
                       </div>
                     ))}
