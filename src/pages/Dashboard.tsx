@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BookOpen, Briefcase, ChevronRight, GraduationCap } from 'lucide-react';
-import { supabase, Tuition, Tutor } from '../lib/supabase';
+import { supabase, Tuition } from '../lib/supabase';
 import { verifyAuthenticatedUser } from '../lib/auth';
 import TuitionCard from '../components/TuitionCard';
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const [tutor, setTutor] = useState<Tutor | null>(null);
   const [tutorProfile, setTutorProfile] = useState<any>(null);
   const [profileStatus, setProfileStatus] = useState<'incomplete' | 'pending' | 'approved' | 'rejected'>('incomplete');
   const [latestTuitions, setLatestTuitions] = useState<Tuition[]>([]);
@@ -47,19 +46,19 @@ export default function Dashboard() {
         .eq('user_id', user.id)
         .maybeSingle();
       
-      setTutor(tutorData);
 
       if (!tutorProfileData) {
         // No profile exists at all
         setProfileStatus('incomplete');
+      } else if (tutorProfileData.status === 'rejected') {
+        // Rejected always takes priority — even if old tutors table entry exists
+        setProfileStatus('rejected');
+      } else if (tutorData) {
+        // Entry in tutors table means approved
+        setProfileStatus('approved');
       } else {
-        if (tutorData) {
-          // Entry in tutors table means approved
-          setProfileStatus('approved');
-        } else {
-          // No entry in tutors table, use new_tutor status
-          setProfileStatus(tutorProfileData.status as 'pending' | 'approved' | 'rejected');
-        }
+        // pending or other status from new_tutor
+        setProfileStatus(tutorProfileData.status as 'pending' | 'approved' | 'rejected');
       }
 
       const [latestResult, allCountResult] = await Promise.all([

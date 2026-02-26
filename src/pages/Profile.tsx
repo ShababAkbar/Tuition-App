@@ -48,7 +48,6 @@ export default function Profile() {
     detailedDescription: '',
   });
   const [existingTutor, setExistingTutor] = useState<Tutor | null>(null);
-  const [rejectedProfile, setRejectedProfile] = useState<any>(null);
   const [profileStatus, setProfileStatus] = useState<'incomplete' | 'pending' | 'approved' | 'rejected'>('incomplete');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -95,7 +94,48 @@ export default function Profile() {
         return;
       }
 
-      // Fetch from tutors table using user_id
+      // FIRST: Check new_tutor table — rejected status takes PRIORITY over tutors table
+      const { data: pendingProfile } = await supabase
+        .from('new_tutor')
+        .select('*')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      // If rejected, always show resubmit form (even if tutors table has old data)
+      if (pendingProfile?.status === 'rejected') {
+        setProfileStatus('rejected');
+        setFormData({
+          name: `${pendingProfile.first_name || ''} ${pendingProfile.last_name || ''}`.trim(),
+          email: user.email || '',
+          phone: pendingProfile.contact || '',
+          address: pendingProfile.address || '',
+          subjects: [],
+          mode_of_tuition: 'Both',
+          city: pendingProfile.city || '',
+          biography: pendingProfile.short_about || '',
+          profile_picture: '',
+          education: pendingProfile.education || [],
+          firstName: pendingProfile.first_name || '',
+          lastName: pendingProfile.last_name || '',
+          fatherName: pendingProfile.father_name || '',
+          contact: pendingProfile.contact || '',
+          otherContact: pendingProfile.other_contact || '',
+          state: pendingProfile.state || '',
+          postalCode: pendingProfile.postal_code || '',
+          cnicFrontUrl: pendingProfile.cnic_front_url || '',
+          cnicBackUrl: pendingProfile.cnic_back_url || '',
+          cnicFrontFile: null,
+          cnicBackFile: null,
+          workExperience: pendingProfile.work_experience || [],
+          experienceYears: pendingProfile.experience_years || 0,
+          courses: pendingProfile.courses || [],
+          shortAbout: pendingProfile.short_about || '',
+          detailedDescription: pendingProfile.detailed_description || '',
+        });
+        return;
+      }
+
+      // SECOND: Check tutors table (approved tutors)
       const { data, error } = await supabase
         .from('tutors')
         .select('*')
@@ -118,7 +158,6 @@ export default function Profile() {
           biography: data.short_bio || data.biography || '',
           profile_picture: data.profile_picture || '',
           education: data.education || [],
-          // Initialize onboarding fields as empty for approved users
           firstName: '',
           lastName: '',
           fatherName: '',
@@ -136,53 +175,40 @@ export default function Profile() {
           shortAbout: '',
           detailedDescription: '',
         });
+      } else if (pendingProfile) {
+        // pending status
+        setProfileStatus(pendingProfile.status as 'pending');
+        setFormData({
+          name: `${pendingProfile.first_name || ''} ${pendingProfile.last_name || ''}`.trim(),
+          email: user.email || '',
+          phone: pendingProfile.contact || '',
+          address: pendingProfile.address || '',
+          subjects: [],
+          mode_of_tuition: 'Both',
+          city: pendingProfile.city || '',
+          biography: pendingProfile.short_about || '',
+          profile_picture: '',
+          education: pendingProfile.education || [],
+          firstName: pendingProfile.first_name || '',
+          lastName: pendingProfile.last_name || '',
+          fatherName: pendingProfile.father_name || '',
+          contact: pendingProfile.contact || '',
+          otherContact: pendingProfile.other_contact || '',
+          state: pendingProfile.state || '',
+          postalCode: pendingProfile.postal_code || '',
+          cnicFrontUrl: pendingProfile.cnic_front_url || '',
+          cnicBackUrl: pendingProfile.cnic_back_url || '',
+          cnicFrontFile: null,
+          cnicBackFile: null,
+          workExperience: pendingProfile.work_experience || [],
+          experienceYears: pendingProfile.experience_years || 0,
+          courses: pendingProfile.courses || [],
+          shortAbout: pendingProfile.short_about || '',
+          detailedDescription: pendingProfile.detailed_description || '',
+        });
       } else {
-        // Check if profile exists in new_tutor table (pending/rejected)
-        const { data: pendingProfile } = await supabase
-          .from('new_tutor')
-          .select('*')
-          .eq('user_id', user.id)
-          .maybeSingle();
-        
-        if (pendingProfile) {
-          setRejectedProfile(pendingProfile);
-          setProfileStatus(pendingProfile.status as 'pending' | 'rejected');
-          
-          // Load full data from new_tutor for rejected/pending profiles
-          setFormData({
-            name: `${pendingProfile.first_name || ''} ${pendingProfile.last_name || ''}`.trim(),
-            email: user.email || '',
-            phone: pendingProfile.contact || '',
-            address: pendingProfile.address || '',
-            subjects: [],
-            mode_of_tuition: 'Both',
-            city: pendingProfile.city || '',
-            biography: pendingProfile.short_about || '',
-            profile_picture: '',
-            education: pendingProfile.education || [],
-            // All onboarding fields
-            firstName: pendingProfile.first_name || '',
-            lastName: pendingProfile.last_name || '',
-            fatherName: pendingProfile.father_name || '',
-            contact: pendingProfile.contact || '',
-            otherContact: pendingProfile.other_contact || '',
-            state: pendingProfile.state || '',
-            postalCode: pendingProfile.postal_code || '',
-            cnicFrontUrl: pendingProfile.cnic_front_url || '',
-            cnicBackUrl: pendingProfile.cnic_back_url || '',
-            cnicFrontFile: null,
-            cnicBackFile: null,
-            workExperience: pendingProfile.work_experience || [],
-            experienceYears: pendingProfile.experience_years || 0,
-            courses: pendingProfile.courses || [],
-            shortAbout: pendingProfile.short_about || '',
-            detailedDescription: pendingProfile.detailed_description || '',
-          });
-        } else {
-          setProfileStatus('incomplete');
-          // No profile yet, set email from auth
-          setFormData(prev => ({ ...prev, email: user.email || '' }));
-        }
+        setProfileStatus('incomplete');
+        setFormData(prev => ({ ...prev, email: user.email || '' }));
       }
     } catch (err) {
       console.error('Error fetching tutor profile:', err);
@@ -917,7 +943,7 @@ export default function Profile() {
                               <label className="block text-xs text-gray-600 mb-1">Result Card/Degree (Optional)</label>
                               <input
                                 type="file"
-                                onChange={(e) => handleEducationChange(index, 'resultCard', e.target.files?.[0] || null)}
+                                onChange={(e) => { const f = e.target.files?.[0]; if (f) handleEducationChange(index, 'resultCard', f); }}
                                 accept="image/*"
                                 className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
                               />
