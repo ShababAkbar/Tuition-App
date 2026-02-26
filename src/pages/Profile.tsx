@@ -312,7 +312,7 @@ export default function Profile() {
     }
   };
 
-  const handleEducationChange = (index: number, field: string, value: string) => {
+  const handleEducationChange = (index: number, field: string, value: string | File) => {
     const newEducation = [...formData.education];
     newEducation[index] = { ...newEducation[index], [field]: value };
     setFormData({ ...formData, education: newEducation });
@@ -321,7 +321,7 @@ export default function Profile() {
   const addEducation = () => {
     setFormData({
       ...formData,
-      education: [...formData.education, { degree: '', institution: '', year: '' }],
+      education: [...formData.education, { degree: '', institution: '', startDate: '', endDate: '', status: 'Completed', resultCard: null, resultCardUrl: '' }],
     });
   };
 
@@ -385,9 +385,23 @@ export default function Profile() {
               .upload(fileName, edu.resultCard);
             
             if (uploadError) throw uploadError;
-            return { ...edu, resultCard: fileName };
+            return { 
+              degree: edu.degree,
+              institution: edu.institution,
+              startDate: edu.startDate,
+              endDate: edu.endDate,
+              status: edu.status,
+              resultCardUrl: fileName 
+            };
           }
-          return edu;
+          return {
+            degree: edu.degree,
+            institution: edu.institution,
+            startDate: edu.startDate,
+            endDate: edu.endDate,
+            status: edu.status,
+            resultCardUrl: edu.resultCardUrl || ''
+          };
         })
       );
 
@@ -602,49 +616,32 @@ export default function Profile() {
                       : 'Please fill in all required fields to submit your profile for approval.'}
                   </p>
 
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    {/* Personal Information */}
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    {/* Column 1: Personal Information */}
                     <div className="space-y-4">
-                      <h4 className="font-medium text-gray-900">Personal Information</h4>
+                      <h4 className="font-medium text-gray-900 mb-3 pb-2 border-b">Personal Information</h4>
                       
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                          First Name <span className="text-red-500">*</span>
+                          Full Name (Read-only)
                         </label>
                         <input
                           type="text"
-                          value={formData.firstName}
-                          onChange={(e) => setFormData({...formData, firstName: e.target.value})}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                          placeholder="Enter your first name"
-                          required
+                          value={`${formData.firstName} ${formData.lastName}`}
+                          readOnly
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed text-gray-600"
                         />
                       </div>
 
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Last Name <span className="text-red-500">*</span>
+                          Email (Read-only)
                         </label>
                         <input
-                          type="text"
-                          value={formData.lastName}
-                          onChange={(e) => setFormData({...formData, lastName: e.target.value})}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                          placeholder="Enter your last name"
-                          required
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Father's Name
-                        </label>
-                        <input
-                          type="text"
-                          value={formData.fatherName}
-                          onChange={(e) => setFormData({...formData, fatherName: e.target.value})}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                          placeholder="Enter your father's name"
+                          type="email"
+                          value={formData.email}
+                          readOnly
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed text-gray-600"
                         />
                       </div>
 
@@ -664,21 +661,35 @@ export default function Profile() {
 
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Other Contact
+                          Father's Name
                         </label>
                         <input
-                          type="tel"
-                          value={formData.otherContact}
-                          onChange={(e) => setFormData({...formData, otherContact: e.target.value})}
+                          type="text"
+                          value={formData.fatherName}
+                          onChange={(e) => setFormData({...formData, fatherName: e.target.value})}
                           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                          placeholder="Alternative contact number"
+                          placeholder="Enter your father's name"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Years of Experience
+                        </label>
+                        <input
+                          type="number"
+                          value={formData.experienceYears}
+                          onChange={(e) => setFormData({...formData, experienceYears: parseInt(e.target.value) || 0})}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          placeholder="0"
+                          min="0"
                         />
                       </div>
                     </div>
 
-                    {/* Address Information */}
+                    {/* Column 2: Address Information */}
                     <div className="space-y-4">
-                      <h4 className="font-medium text-gray-900">Address Details</h4>
+                      <h4 className="font-medium text-gray-900 mb-3 pb-2 border-b">Address Details</h4>
                       
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -737,78 +748,220 @@ export default function Profile() {
 
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Years of Experience
+                          Other Contact
                         </label>
                         <input
-                          type="number"
-                          value={formData.experienceYears}
-                          onChange={(e) => setFormData({...formData, experienceYears: parseInt(e.target.value) || 0})}
+                          type="tel"
+                          value={formData.otherContact}
+                          onChange={(e) => setFormData({...formData, otherContact: e.target.value})}
                           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                          placeholder="0"
-                          min="0"
+                          placeholder="Alternative contact number"
                         />
                       </div>
                     </div>
 
-                    {/* CNIC Documents */}
-                    <div className="lg:col-span-2 space-y-4">
-                      <h4 className="font-medium text-gray-900">CNIC Documents</h4>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            CNIC Front
-                          </label>
-                          <input
-                            type="file"
-                            ref={cnicFrontRef}
-                            onChange={(e) => setFormData({...formData, cnicFrontFile: e.target.files?.[0] || null})}
-                            accept="image/*"
-                            className="w-full px-4 py-3 border border-gray-300 rounded-lg"
-                          />
-                          {formData.cnicFrontUrl && <p className="text-xs text-green-600 mt-1">✓ File uploaded</p>}
+                    {/* Column 3: Subjects & Mode */}
+                    <div className="space-y-4">
+                      <h4 className="font-medium text-gray-900 mb-3 pb-2 border-b">Subjects & Teaching</h4>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Subjects Can Teach
+                        </label>
+                        <div className="border border-gray-300 rounded-lg p-3 min-h-[120px] bg-white">
+                          <div className="flex flex-wrap gap-2 mb-2">
+                            {formData.courses.map((subject) => (
+                              <span
+                                key={subject}
+                                className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800"
+                              >
+                                {subject}
+                                <button
+                                  type="button"
+                                  onClick={() => setFormData({...formData, courses: formData.courses.filter(s => s !== subject)})}
+                                  className="ml-2 hover:text-blue-900"
+                                >
+                                  <X className="w-3 h-3" />
+                                </button>
+                              </span>
+                            ))}
+                          </div>
+                          <select
+                            onChange={(e) => {
+                              if (e.target.value && !formData.courses.includes(e.target.value)) {
+                                setFormData({...formData, courses: [...formData.courses, e.target.value]});
+                                e.target.value = '';
+                              }
+                            }}
+                            className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+                          >
+                            <option value="">Add a subject...</option>
+                            {AVAILABLE_SUBJECTS.filter(s => !formData.courses.includes(s)).map((subject) => (
+                              <option key={subject} value={subject}>{subject}</option>
+                            ))}
+                          </select>
                         </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            CNIC Back
-                          </label>
-                          <input
-                            type="file"
-                            ref={cnicBackRef}
-                            onChange={(e) => setFormData({...formData, cnicBackFile: e.target.files?.[0] || null})}
-                            accept="image/*"
-                            className="w-full px-4 py-3 border border-gray-300 rounded-lg"
-                          />
-                          {formData.cnicBackUrl && <p className="text-xs text-green-600 mt-1">✓ File uploaded</p>}
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Mode of Tuition
+                        </label>
+                        <div className="space-y-2">
+                          {['Online', 'Home', 'Both'].map((mode) => (
+                            <label key={mode} className="flex items-center">
+                              <input
+                                type="radio"
+                                name="mode_of_tuition_rejected"
+                                value={mode}
+                                checked={formData.mode_of_tuition === mode}
+                                onChange={() => setFormData({...formData, mode_of_tuition: mode})}
+                                className="w-4 h-4 text-blue-600 focus:ring-blue-500"
+                              />
+                              <span className="ml-2 text-sm text-gray-700">{mode}</span>
+                            </label>
+                          ))}
                         </div>
                       </div>
                     </div>
+                  </div>
 
-                    {/* About */}
-                    <div className="lg:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Short About (Brief Introduction)
-                      </label>
-                      <textarea
-                        value={formData.shortAbout}
-                        onChange={(e) => setFormData({...formData, shortAbout: e.target.value})}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Brief introduction about yourself..."
-                        rows={3}
-                      />
+                  {/* CNIC Documents */}
+                  <div className="mt-6">
+                    <h4 className="font-medium text-gray-900 mb-3">CNIC Documents</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          CNIC Front
+                        </label>
+                        <input
+                          type="file"
+                          ref={cnicFrontRef}
+                          onChange={(e) => setFormData({...formData, cnicFrontFile: e.target.files?.[0] || null})}
+                          accept="image/*"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg"
+                        />
+                        {formData.cnicFrontUrl && <p className="text-xs text-green-600 mt-1">✓ File uploaded</p>}
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          CNIC Back
+                        </label>
+                        <input
+                          type="file"
+                          ref={cnicBackRef}
+                          onChange={(e) => setFormData({...formData, cnicBackFile: e.target.files?.[0] || null})}
+                          accept="image/*"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg"
+                        />
+                        {formData.cnicBackUrl && <p className="text-xs text-green-600 mt-1">✓ File uploaded</p>}
+                      </div>
                     </div>
+                  </div>
 
-                    <div className="lg:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Detailed Description
-                      </label>
-                      <textarea
-                        value={formData.detailedDescription}
-                        onChange={(e) => setFormData({...formData, detailedDescription: e.target.value})}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Detailed description of your teaching experience and methodology..."
-                        rows={5}
-                      />
+                  {/* Education */}
+                  <div className="mt-6">
+                    <h4 className="font-medium text-gray-900 mb-3">Education</h4>
+                    <div className="space-y-4">
+                      {formData.education.map((edu: any, index: number) => (
+                        <div key={index} className="p-4 border-2 border-gray-200 rounded-lg bg-white">
+                          <div className="flex justify-between items-start mb-3">
+                            <span className="text-sm font-semibold text-gray-700">Education {index + 1}</span>
+                            <button
+                              type="button"
+                              onClick={() => removeEducation(index)}
+                              className="text-red-500 hover:text-red-700"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </div>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <input
+                              type="text"
+                              value={edu.degree || ''}
+                              onChange={(e) => handleEducationChange(index, 'degree', e.target.value)}
+                              placeholder="Degree (e.g., BS Computer Science)"
+                              className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+                            />
+                            <input
+                              type="text"
+                              value={edu.institution || ''}
+                              onChange={(e) => handleEducationChange(index, 'institution', e.target.value)}
+                              placeholder="Institution"
+                              className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+                            />
+                            <input
+                              type="text"
+                              value={edu.startDate || ''}
+                              onChange={(e) => handleEducationChange(index, 'startDate', e.target.value)}
+                              placeholder="Start Date (e.g., 2020-01-01)"
+                              className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+                            />
+                            <input
+                              type="text"
+                              value={edu.endDate || ''}
+                              onChange={(e) => handleEducationChange(index, 'endDate', e.target.value)}
+                              placeholder="End Date (e.g., 2024-12-31)"
+                              className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+                            />
+                            <select
+                              value={edu.status || 'Completed'}
+                              onChange={(e) => handleEducationChange(index, 'status', e.target.value)}
+                              className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+                            >
+                              <option value="Completed">Completed</option>
+                              <option value="Continuing">Continuing</option>
+                              <option value="In Progress">In Progress</option>
+                            </select>
+                            <div>
+                              <label className="block text-xs text-gray-600 mb-1">Result Card/Degree (Optional)</label>
+                              <input
+                                type="file"
+                                onChange={(e) => handleEducationChange(index, 'resultCard', e.target.files?.[0] || null)}
+                                accept="image/*"
+                                className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+                              />
+                              {edu.resultCardUrl && <p className="text-xs text-green-600 mt-1">✓ File uploaded</p>}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                      <button
+                        type="button"
+                        onClick={addEducation}
+                        className="inline-flex items-center px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                      >
+                        <Plus className="w-4 h-4 mr-1" />
+                        Add Education
+                      </button>
                     </div>
+                  </div>
+
+                  {/* About */}
+                  <div className="mt-6">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Short About (Brief Introduction)
+                    </label>
+                    <textarea
+                      value={formData.shortAbout}
+                      onChange={(e) => setFormData({...formData, shortAbout: e.target.value})}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="Brief introduction about yourself..."
+                      rows={3}
+                    />
+                  </div>
+
+                  <div className="mt-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Detailed Description
+                    </label>
+                    <textarea
+                      value={formData.detailedDescription}
+                      onChange={(e) => setFormData({...formData, detailedDescription: e.target.value})}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="Detailed description of your teaching experience and methodology..."
+                      rows={5}
+                    />
                   </div>
                 </div>
               )}
@@ -1038,6 +1191,14 @@ export default function Profile() {
                   </div>
                 </div>
               </div>
+
+              {/* Show pending status message */}
+              {profileStatus === 'pending' && (
+                <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-center">
+                  <AlertCircle className="w-5 h-5 text-blue-600 mr-3 flex-shrink-0" />
+                  <p className="text-blue-700 font-medium">Your profile is currently under review. You cannot make changes until it is approved or rejected.</p>
+                </div>
+              )}
 
               <div className="flex justify-end">
                 <button
