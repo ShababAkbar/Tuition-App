@@ -41,6 +41,22 @@ const TutorApplicationDetail = () => {
   const { toast } = useToast();
   const [application, setApplication] = useState<TutorApplication | null>(null);
   const [loading, setLoading] = useState(true);
+  const [signedUrls, setSignedUrls] = useState<Record<string, string>>({});
+
+  const getSignedUrl = async (path: string | null): Promise<string | null> => {
+    if (!path) return null;
+    // If it's already a full URL, return as-is
+    if (path.startsWith('http')) return path;
+    try {
+      const { data, error } = await supabase.storage
+        .from('tutor-documents')
+        .createSignedUrl(path, 3600);
+      if (error || !data) return null;
+      return data.signedUrl;
+    } catch {
+      return null;
+    }
+  };
 
   useEffect(() => {
     const checkAdminAndFetch = async () => {
@@ -73,6 +89,25 @@ const TutorApplicationDetail = () => {
 
       if (error) throw error;
       setApplication(data);
+
+      // Generate signed URLs for all private storage images
+      const urls: Record<string, string> = {};
+
+      const cnicFront = await getSignedUrl(data.cnic_front_url);
+      if (cnicFront) urls['cnic_front'] = cnicFront;
+
+      const cnicBack = await getSignedUrl(data.cnic_back_url);
+      if (cnicBack) urls['cnic_back'] = cnicBack;
+
+      if (data.education && Array.isArray(data.education)) {
+        for (let i = 0; i < data.education.length; i++) {
+          const edu = data.education[i];
+          const resultUrl = await getSignedUrl(edu.resultCardUrl || edu.resultCard);
+          if (resultUrl) urls[`edu_result_${i}`] = resultUrl;
+        }
+      }
+
+      setSignedUrls(urls);
     } catch (error: any) {
       toast({
         title: "Error",
@@ -296,19 +331,25 @@ const TutorApplicationDetail = () => {
                     <p className="text-sm text-gray-500 mb-3">CNIC Front</p>
                     {application.cnic_front_url ? (
                       <div className="space-y-2">
-                        <img 
-                          src={application.cnic_front_url} 
-                          alt="CNIC Front" 
-                          className="w-full h-auto border-2 border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
-                        />
-                        <a 
-                          href={application.cnic_front_url} 
-                          target="_blank" 
-                          rel="noopener noreferrer" 
-                          className="text-sm text-blue-600 hover:underline inline-block"
-                        >
-                          Open in new tab
-                        </a>
+                        {signedUrls['cnic_front'] ? (
+                          <img 
+                            src={signedUrls['cnic_front']} 
+                            alt="CNIC Front" 
+                            className="w-full h-auto border-2 border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                          />
+                        ) : (
+                          <div className="w-full h-32 bg-gray-100 rounded-lg flex items-center justify-center text-sm text-gray-400">Loading image...</div>
+                        )}
+                        {signedUrls['cnic_front'] && (
+                          <a 
+                            href={signedUrls['cnic_front']} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className="text-sm text-blue-600 hover:underline inline-block"
+                          >
+                            Open in new tab
+                          </a>
+                        )}
                       </div>
                     ) : (
                       <span className="text-red-500">Not uploaded</span>
@@ -318,19 +359,25 @@ const TutorApplicationDetail = () => {
                     <p className="text-sm text-gray-500 mb-3">CNIC Back</p>
                     {application.cnic_back_url ? (
                       <div className="space-y-2">
-                        <img 
-                          src={application.cnic_back_url} 
-                          alt="CNIC Back" 
-                          className="w-full h-auto border-2 border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
-                        />
-                        <a 
-                          href={application.cnic_back_url} 
-                          target="_blank" 
-                          rel="noopener noreferrer" 
-                          className="text-sm text-blue-600 hover:underline inline-block"
-                        >
-                          Open in new tab
-                        </a>
+                        {signedUrls['cnic_back'] ? (
+                          <img 
+                            src={signedUrls['cnic_back']} 
+                            alt="CNIC Back" 
+                            className="w-full h-auto border-2 border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                          />
+                        ) : (
+                          <div className="w-full h-32 bg-gray-100 rounded-lg flex items-center justify-center text-sm text-gray-400">Loading image...</div>
+                        )}
+                        {signedUrls['cnic_back'] && (
+                          <a 
+                            href={signedUrls['cnic_back']} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className="text-sm text-blue-600 hover:underline inline-block"
+                          >
+                            Open in new tab
+                          </a>
+                        )}
                       </div>
                     ) : (
                       <span className="text-red-500">Not uploaded</span>
@@ -361,19 +408,25 @@ const TutorApplicationDetail = () => {
                         </p>
                         {edu.resultCardUrl && (
                           <div className="mt-3 space-y-2">
-                            <img 
-                              src={edu.resultCardUrl} 
-                              alt={`${edu.degree} Result Card`} 
-                              className="w-full max-w-md h-auto border-2 border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
-                            />
-                            <a 
-                              href={edu.resultCardUrl} 
-                              target="_blank" 
-                              rel="noopener noreferrer" 
-                              className="text-sm text-blue-600 hover:underline inline-block"
-                            >
-                              Open in new tab
-                            </a>
+                            {signedUrls[`edu_result_${index}`] ? (
+                              <img 
+                                src={signedUrls[`edu_result_${index}`]} 
+                                alt={`${edu.degree} Result Card`} 
+                                className="w-full max-w-md h-auto border-2 border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                              />
+                            ) : (
+                              <div className="w-full max-w-md h-24 bg-gray-100 rounded-lg flex items-center justify-center text-sm text-gray-400">Loading image...</div>
+                            )}
+                            {signedUrls[`edu_result_${index}`] && (
+                              <a 
+                                href={signedUrls[`edu_result_${index}`]} 
+                                target="_blank" 
+                                rel="noopener noreferrer" 
+                                className="text-sm text-blue-600 hover:underline inline-block"
+                              >
+                                Open in new tab
+                              </a>
+                            )}
                           </div>
                         )}
                       </div>
