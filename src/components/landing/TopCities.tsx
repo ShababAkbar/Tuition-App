@@ -23,6 +23,7 @@ import wahCanttImg from "@/assets/cities/Wah Cantt.jpg";
 import faisalabadImg from "@/assets/cities/Faisalabad.jpg";
 import peshawarImg from "@/assets/cities/Peshawar.jpg";
 import sargodhaImg from "@/assets/cities/Sargodha.jpg";
+import bhimberImg from "@/assets/cities/Bhimber.jpg";
 
 interface City {
   city: string;
@@ -53,6 +54,7 @@ const CITY_IMAGES: Record<string, string> = {
   "mandi bahauddin": mandiBahauddinImg,
   "wah cantt":      wahCanttImg,
   sargodha:         sargodhaImg,
+  bhimber:          bhimberImg,
   multan:       "https://images.unsplash.com/photo-1565117157007-6e9e18e1ad8c?w=400&h=260&fit=crop&auto=format",
   quetta:       "https://images.unsplash.com/photo-1586348943529-beaae6c28db9?w=400&h=260&fit=crop&auto=format",
   hyderabad:    "https://images.unsplash.com/photo-1571771709-b3ee8ded9a7e?w=400&h=260&fit=crop&auto=format",
