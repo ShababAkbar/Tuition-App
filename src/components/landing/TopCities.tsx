@@ -15,6 +15,13 @@ import pattokiImg from "@/assets/cities/Pattoki.jpg";
 import hafizabadImg from "@/assets/cities/Hafizabad.jpg";
 import bhawalpurImg from "@/assets/cities/Bhawalpur.jpg";
 import jhangImg from "@/assets/cities/Jhang.jpg";
+import kamraImg from "@/assets/cities/Kamra.jpg";
+import sukkurImg from "@/assets/cities/Sukkur.webp";
+import bannuImg from "@/assets/cities/Bannu.jpg";
+import mandiBahauddinImg from "@/assets/cities/Mandi Bahauddin.jpg";
+import wahCanttImg from "@/assets/cities/Wah Cantt.jpg";
+import faisalabadImg from "@/assets/cities/Faisalabad.jpg";
+import peshawarImg from "@/assets/cities/Peshawar.jpg";
 
 interface City {
   city: string;
@@ -36,9 +43,15 @@ const CITY_IMAGES: Record<string, string> = {
   bhawalpur:    bhawalpurImg,
   jhang:        jhangImg,
   // Fallback URLs for missing cities
-  faisalabad:   "https://images.unsplash.com/photo-1599776615597-14ddf5d70a8f?w=400&h=260&fit=crop&auto=format",
+  faisalabad:       faisalabadImg,
+  peshawar:         peshawarImg,
+  kamra:            kamraImg,
+  sukkur:           sukkurImg,
+  bannu:            bannuImg,
+  banu:             bannuImg,
+  "mandi bahauddin": mandiBahauddinImg,
+  "wah cantt":      wahCanttImg,
   multan:       "https://images.unsplash.com/photo-1565117157007-6e9e18e1ad8c?w=400&h=260&fit=crop&auto=format",
-  peshawar:     "https://images.unsplash.com/photo-1576675784201-0e142b423952?w=400&h=260&fit=crop&auto=format",
   quetta:       "https://images.unsplash.com/photo-1586348943529-beaae6c28db9?w=400&h=260&fit=crop&auto=format",
   hyderabad:    "https://images.unsplash.com/photo-1571771709-b3ee8ded9a7e?w=400&h=260&fit=crop&auto=format",
   sialkot:      "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400&h=260&fit=crop&auto=format",
