@@ -12,8 +12,7 @@ interface TrackConversionParams {
  */
 export async function trackMetaConversion(params: TrackConversionParams) {
   try {
-    // Get client IP and User Agent (browser will provide these)
-    const clientIp = await getClientIp();
+    // Get User Agent (browser will provide this)
     const userAgent = navigator.userAgent;
 
     // Get Facebook cookies if available (for better attribution)
@@ -25,7 +24,7 @@ export async function trackMetaConversion(params: TrackConversionParams) {
       body: {
         email: params.email,
         phone: params.phone,
-        clientIp,
+        clientIp: undefined,
         userAgent,
         eventId: params.eventId,
         fbp,
@@ -43,22 +42,6 @@ export async function trackMetaConversion(params: TrackConversionParams) {
   } catch (error) {
     console.error("Error tracking Meta conversion:", error);
     return { success: false, error };
-  }
-}
-
-/**
- * Get client IP address (best effort)
- * Note: This may not work in all environments due to browser privacy restrictions
- */
-async function getClientIp(): Promise<string | undefined> {
-  try {
-    // Try to get IP from a public API (fallback option)
-    const response = await fetch("https://api.ipify.org?format=json");
-    const data = await response.json();
-    return data.ip;
-  } catch (error) {
-    console.warn("Could not fetch client IP:", error);
-    return undefined;
   }
 }
 

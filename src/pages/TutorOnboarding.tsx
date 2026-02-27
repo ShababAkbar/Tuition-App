@@ -298,30 +298,38 @@ const TutorOnboarding = () => {
       let cnicBackUrl = null;
 
       if (formData.cnicFront) {
-        const frontPath = `${userId}/cnic-front-${Date.now()}`;
-        const { error: frontError } = await supabase.storage
-          .from('tutor-documents')
-          .upload(frontPath, formData.cnicFront);
-        
-        if (!frontError) {
-          const { data: { publicUrl } } = supabase.storage
+        try {
+          const frontPath = `${userId}/cnic-front-${Date.now()}`;
+          const { error: frontError } = await supabase.storage
             .from('tutor-documents')
-            .getPublicUrl(frontPath);
-          cnicFrontUrl = publicUrl;
+            .upload(frontPath, formData.cnicFront);
+          
+          if (!frontError) {
+            const { data: { publicUrl } } = supabase.storage
+              .from('tutor-documents')
+              .getPublicUrl(frontPath);
+            cnicFrontUrl = publicUrl;
+          }
+        } catch (uploadErr) {
+          console.warn('CNIC front upload failed, continuing without it:', uploadErr);
         }
       }
 
       if (formData.cnicBack) {
-        const backPath = `${userId}/cnic-back-${Date.now()}`;
-        const { error: backError } = await supabase.storage
-          .from('tutor-documents')
-          .upload(backPath, formData.cnicBack);
-        
-        if (!backError) {
-          const { data: { publicUrl } } = supabase.storage
+        try {
+          const backPath = `${userId}/cnic-back-${Date.now()}`;
+          const { error: backError } = await supabase.storage
             .from('tutor-documents')
-            .getPublicUrl(backPath);
-          cnicBackUrl = publicUrl;
+            .upload(backPath, formData.cnicBack);
+          
+          if (!backError) {
+            const { data: { publicUrl } } = supabase.storage
+              .from('tutor-documents')
+              .getPublicUrl(backPath);
+            cnicBackUrl = publicUrl;
+          }
+        } catch (uploadErr) {
+          console.warn('CNIC back upload failed, continuing without it:', uploadErr);
         }
       }
 
@@ -331,16 +339,20 @@ const TutorOnboarding = () => {
           let resultCardUrl = null;
           
           if (edu.resultCard) {
-            const resultPath = `${userId}/result-card-${Date.now()}-${Math.random().toString(36).substring(7)}`;
-            const { error: resultError } = await supabase.storage
-              .from('tutor-documents')
-              .upload(resultPath, edu.resultCard);
-            
-            if (!resultError) {
-              const { data: { publicUrl } } = supabase.storage
+            try {
+              const resultPath = `${userId}/result-card-${Date.now()}-${Math.random().toString(36).substring(7)}`;
+              const { error: resultError } = await supabase.storage
                 .from('tutor-documents')
-                .getPublicUrl(resultPath);
-              resultCardUrl = publicUrl;
+                .upload(resultPath, edu.resultCard);
+              
+              if (!resultError) {
+                const { data: { publicUrl } } = supabase.storage
+                  .from('tutor-documents')
+                  .getPublicUrl(resultPath);
+                resultCardUrl = publicUrl;
+              }
+            } catch (uploadErr) {
+              console.warn('Result card upload failed, continuing without it:', uploadErr);
             }
           }
           
