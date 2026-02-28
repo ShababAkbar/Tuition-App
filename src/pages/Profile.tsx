@@ -382,43 +382,63 @@ export default function Profile() {
       let cnicBackUrl = formData.cnicBackUrl;
 
       if (formData.cnicFrontFile) {
-        const fileName = `${user.id}/cnic-front-${Date.now()}.${formData.cnicFrontFile.name.split('.').pop()}`;
-        const { error: uploadError } = await supabase.storage
-          .from('tutor-documents')
-          .upload(fileName, formData.cnicFrontFile);
-        
-        if (uploadError) throw uploadError;
-        cnicFrontUrl = fileName;
+        try {
+          const fileName = `${user.id}/cnic-front-${Date.now()}.${formData.cnicFrontFile.name.split('.').pop()}`;
+          const { error: uploadError } = await supabase.storage
+            .from('tutor-documents')
+            .upload(fileName, formData.cnicFrontFile);
+          
+          if (uploadError) {
+            console.warn('CNIC front upload error (keeping old URL):', uploadError);
+          } else {
+            cnicFrontUrl = fileName;
+          }
+        } catch (uploadErr) {
+          console.warn('CNIC front upload failed (keeping old URL):', uploadErr);
+        }
       }
 
       if (formData.cnicBackFile) {
-        const fileName = `${user.id}/cnic-back-${Date.now()}.${formData.cnicBackFile.name.split('.').pop()}`;
-        const { error: uploadError } = await supabase.storage
-          .from('tutor-documents')
-          .upload(fileName, formData.cnicBackFile);
-        
-        if (uploadError) throw uploadError;
-        cnicBackUrl = fileName;
+        try {
+          const fileName = `${user.id}/cnic-back-${Date.now()}.${formData.cnicBackFile.name.split('.').pop()}`;
+          const { error: uploadError } = await supabase.storage
+            .from('tutor-documents')
+            .upload(fileName, formData.cnicBackFile);
+          
+          if (uploadError) {
+            console.warn('CNIC back upload error (keeping old URL):', uploadError);
+          } else {
+            cnicBackUrl = fileName;
+          }
+        } catch (uploadErr) {
+          console.warn('CNIC back upload failed (keeping old URL):', uploadErr);
+        }
       }
 
       // Upload education result cards if any
       const updatedEducation = await Promise.all(
         formData.education.map(async (edu: any) => {
           if (edu.resultCard && edu.resultCard instanceof File) {
-            const fileName = `${user.id}/result-card-${Date.now()}.${edu.resultCard.name.split('.').pop()}`;
-            const { error: uploadError } = await supabase.storage
-              .from('tutor-documents')
-              .upload(fileName, edu.resultCard);
-            
-            if (uploadError) throw uploadError;
-            return { 
-              degree: edu.degree,
-              institution: edu.institution,
-              startDate: edu.startDate,
-              endDate: edu.endDate,
-              status: edu.status,
-              resultCardUrl: fileName 
-            };
+            try {
+              const fileName = `${user.id}/result-card-${Date.now()}.${edu.resultCard.name.split('.').pop()}`;
+              const { error: uploadError } = await supabase.storage
+                .from('tutor-documents')
+                .upload(fileName, edu.resultCard);
+              
+              if (!uploadError) {
+                return { 
+                  degree: edu.degree,
+                  institution: edu.institution,
+                  startDate: edu.startDate,
+                  endDate: edu.endDate,
+                  status: edu.status,
+                  resultCardUrl: fileName 
+                };
+              }
+              console.warn('Result card upload error (keeping old URL):', uploadError);
+            } catch (uploadErr) {
+              console.warn('Result card upload failed (keeping old URL):', uploadErr);
+            }
           }
           return {
             degree: edu.degree,
