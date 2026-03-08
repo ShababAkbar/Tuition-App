@@ -96,8 +96,8 @@ const EMAIL_BODY_HTML = `
 // Set to true to preview emails WITHOUT actually sending them
 const DRY_RUN = false;
 
-// Delay between each email (milliseconds) - 500ms = 2 emails/sec (safe for Resend)
-const DELAY_MS = 500;
+// Delay between each email (milliseconds) - 2000ms to respect Resend's 2 req/sec limit
+const DELAY_MS = 2000;
 
 // ============================================================
 // SCRIPT - DO NOT EDIT BELOW THIS LINE

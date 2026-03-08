@@ -10,6 +10,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { ADMIN_USER_ID } from '@/lib/constants';
 
+// Helper function to add delay between email sends (for rate limiting)
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
 interface TuitionApplication {
   id: string;
   tuition_id: string;
@@ -175,6 +178,8 @@ export default function TuitionApplications() {
           tuition?.grade || '',
           tuition?.fee || ''
         );
+        // Wait 2 seconds to respect Resend's rate limit (2 req/sec)
+        await sleep(2000);
       } else {
         console.warn('No email found for accepted tutor');
       }
@@ -190,6 +195,8 @@ export default function TuitionApplications() {
             tuition?.student_name || '',
             tuition?.subject || ''
           );
+          // Wait 2 seconds before sending next email to respect rate limit
+          await sleep(2000);
         }
       }
 
