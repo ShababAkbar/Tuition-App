@@ -27,28 +27,32 @@ export default function TuitionListItem({ tuition, onUpdate }: TuitionListItemPr
         return;
       }
 
-      // Check if approved in tutors table
-      const { data: tutorData } = await supabase
-        .from('tutors')
-        .select('id')
+      // Check new_tutor table first (onboarding submission)
+      const { data: tutorProfileData } = await supabase
+        .from('new_tutor')
+        .select('*')
         .eq('user_id', user.id)
         .maybeSingle();
 
-      if (tutorData) {
+      // Check tutors table (approved tutors)
+      const { data: tutorData } = await supabase
+        .from('tutors')
+        .select('*')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (!tutorProfileData) {
+        // No profile exists at all
+        setProfileStatus('incomplete');
+      } else if (tutorProfileData.status === 'rejected') {
+        // Rejected always takes priority
+        setProfileStatus('rejected');
+      } else if (tutorData) {
+        // Entry in tutors table means approved
         setProfileStatus('approved');
       } else {
-        // Check new_tutor table for pending status
-        const { data: pendingProfile } = await supabase
-          .from('new_tutor')
-          .select('status')
-          .eq('user_id', user.id)
-          .maybeSingle();
-        
-        if (pendingProfile) {
-          setProfileStatus(pendingProfile.status as 'pending' | 'rejected');
-        } else {
-          setProfileStatus('incomplete');
-        }
+        // pending or other status from new_tutor
+        setProfileStatus(tutorProfileData.status as 'pending' | 'approved' | 'rejected');
       }
     } catch (error) {
       console.error('Error checking profile status:', error);
