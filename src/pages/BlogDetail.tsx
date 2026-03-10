@@ -6,6 +6,7 @@ import LandingFooter from "@/components/landing/LandingFooter";
 import SEOHead from "@/components/SEOHead";
 import { useState, useEffect } from "react";
 import { allBlogs, BlogPost } from "@/lib/blogData";
+import PunjabSchoolsArticle from "./PunjabSchoolsArticle";
 
 const BlogDetail = () => {
   const navigate = useNavigate();
@@ -19,6 +20,11 @@ const BlogDetail = () => {
       setBlog(foundBlog);
     }
   }, [slug]);
+
+  // Special newspaper-style layout for Punjab schools article
+  if (slug === "rana-sikandar-hayat-punjab-schools-band-march-2026") {
+    return <PunjabSchoolsArticle />;
+  }
 
   if (!blog) {
     return (

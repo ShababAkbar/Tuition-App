@@ -408,5 +408,59 @@ Whether you're preparing for board exams, need help with daily homework, or want
     date: "Jan 10, 2026",
     category: "Online Learning",
     slug: "rise-of-online-tutoring-pakistan"
+  },
+  {
+    id: "8",
+    title: "Rana Sikandar Hayat Ka U-Turn: Punjab Schools 31 March Tak Band, Online Classes Shuru",
+    excerpt: "Punjab Education Minister Rana Sikandar Hayat ne pehle schools open rehne ka ailan kiya, phir 3 din mein U-turn lete hue 31 March tak tamam schools band karne ka hukam de diya. Board exams schedule par honge.",
+    content: `**BREAKING NEWS - March 10, 2026**
+
+Punjab Education Minister Rana Sikandar Hayat ne ek ajeeb aur aiteraz-angez U-turn lete hue, sirf 3 din ke andar, apna hi diya hua byan mukamal taur par wapis le liya. March 9 ko, Punjab ke tamam schools, colleges aur universities ko 31 March 2026 tak band karne ka official hukam jari ho gaya — aur online classes lazmi qarar de di gayin.
+
+**3 Din Ka U-Turn — Timeline**
+
+March 6, 2026 - Sarkari Byan:
+"Schools are open. No closures, no online classes. Rumors par dhyan na dein." — Rana Sikandar Hayat (Official X/Twitter)
+
+March 9, 2026 - Naya Hukam (Sirf 72 Ghante Baad!):
+Punjab ke tamam schools, colleges aur universities 31 March tak band. Online mode mandatory. Sirf board exams schedule par.
+
+**Key Points at a Glance**
+
+- Punjab ke tamam sarkari aur private schools, colleges aur universities 10–31 March tak band
+- Online classes mandatory ho gayi hain — dono private aur government institutions ke liye
+- Grade 8 ke exams aur tamam board exams schedule par jari hain
+- Matric exams 27 March se shuru honge — schools band hone ke bawajood
+- Intermediate Part-I & II exams May 2026 mein hain
+- Faisla economic crisis aur fuel shortage ki wajah se liya gaya
+
+**School Closure Ki Wajah**
+
+Hukumat ke mutabiq yeh faisla Pakistan ki ongoing economic crisis aur fuel supply disruption ki wajah se kiya gaya — jo Middle East mein jaari kasheedagi ke baad mazeed complicated ho gayi hai.
+
+**Board Exams Ka Kya Hoga?**
+
+Minister ne clearly confirm kiya hai ke board exams par bilkul koi asar nahi hoga. Tamam exams apne muqarara schedule par hote rahenge — chahe schools physically band hoon.
+
+- Grade 8 Annual Exams: 9 March 2026 (shuru ho gaye) ✅ Jari Hain
+- Matric Exams (Grade 9 & 10): 27 March 2026 ✅ Schedule Par
+- College / University Exams: April Akhir 2026 ✅ Schedule Par
+- Intermediate Part-I & II Exams: May 2026 ✅ Schedule Par
+- O Level & A Level Exams: Intermediate ke baad ✅ Schedule Par
+
+**Walidain Aur Students Ke Liye Mashwara**
+
+Yeh waqt confusion ka nahi, fauran action lene ka hai. Schools band hain, online classes shuru hain, aur board exams bhi sar par hain. Experts ka mashwara hai ke agar aapka bacha board exams ki tayyari mein peeche lag raha hai, toh ek qualified private home tutor ya online tuition service abhi sabse effective solution hai.
+
+**Is Mushkil Waqt Mein — Apna Tuition Aapke Saath Hai**
+
+Schools band hain, lekin board exams aane waale hain. Aaj hi apne bachay ke liye ek qualified, verified Home ya Online Tutor book karein — affordable rates mein, poore Pakistan mein.
+
+For complete details with timeline, official statements, exam schedule table, and expert analysis, read the full article.`,
+    image: "/blog-images/rana-sikandar-hayat-schools-closed.jpeg",
+    author: "Apna Tuition News Desk",
+    date: "Mar 10, 2026",
+    category: "Education News",
+    slug: "rana-sikandar-hayat-punjab-schools-band-march-2026"
   }
 ];
