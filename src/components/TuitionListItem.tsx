@@ -9,22 +9,26 @@ interface TuitionListItemProps {
   onUpdate: () => void;
 }
 
+type ProfileStatus = 'incomplete' | 'pending' | 'approved' | 'rejected';
+
 export default function TuitionListItem({ tuition, onUpdate }: TuitionListItemProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [applying, setApplying] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [profileStatus, setProfileStatus] = useState<'incomplete' | 'pending' | 'approved' | 'rejected'>('incomplete');
+  const [profileStatus, setProfileStatus] = useState<ProfileStatus | null>(null);
+  const [isCheckingProfile, setIsCheckingProfile] = useState(true);
 
   useEffect(() => {
     checkProfileStatus();
   }, []);
 
-  const checkProfileStatus = async () => {
+  const checkProfileStatus = async (): Promise<ProfileStatus> => {
+    setIsCheckingProfile(true);
     try {
       const user = await verifyAuthenticatedUser();
       if (!user) {
         setProfileStatus('incomplete');
-        return;
+        return 'incomplete';
       }
 
       // Check new_tutor table first (onboarding submission)
@@ -44,34 +48,45 @@ export default function TuitionListItem({ tuition, onUpdate }: TuitionListItemPr
       if (!tutorProfileData) {
         // No profile exists at all
         setProfileStatus('incomplete');
+        return 'incomplete';
       } else if (tutorProfileData.status === 'rejected') {
         // Rejected always takes priority
         setProfileStatus('rejected');
+        return 'rejected';
       } else if (tutorData) {
         // Entry in tutors table means approved
         setProfileStatus('approved');
+        return 'approved';
       } else {
         // pending or other status from new_tutor
-        setProfileStatus(tutorProfileData.status as 'pending' | 'approved' | 'rejected');
+        const status = tutorProfileData.status as 'pending' | 'approved' | 'rejected';
+        setProfileStatus(status);
+        return status;
       }
     } catch (error) {
       console.error('Error checking profile status:', error);
+      setProfileStatus('incomplete');
+      return 'incomplete';
+    } finally {
+      setIsCheckingProfile(false);
     }
   };
 
   const handleApply = async () => {
+    const latestProfileStatus = isCheckingProfile ? await checkProfileStatus() : (profileStatus ?? await checkProfileStatus());
+
     // Check profile status before showing modal
-    if (profileStatus === 'incomplete') {
+    if (latestProfileStatus === 'incomplete') {
       alert('Please create a tutor profile first before applying for tuitions.');
       return;
     }
 
-    if (profileStatus === 'pending') {
+    if (latestProfileStatus === 'pending') {
       alert('Your profile is pending approval. You will be able to apply once it is approved.');
       return;
     }
 
-    if (profileStatus === 'rejected') {
+    if (latestProfileStatus === 'rejected') {
       alert('Your profile was not approved. Please contact support for assistance.');
       return;
     }
@@ -184,10 +199,10 @@ export default function TuitionListItem({ tuition, onUpdate }: TuitionListItemPr
             {!tuition.tutor_id && (
               <button
                 onClick={handleApply}
-                disabled={applying}
+                disabled={applying || isCheckingProfile}
                 className="bg-purple-600 hover:bg-purple-700 disabled:bg-purple-400 text-white font-medium px-4 sm:px-6 py-2 rounded-lg transition-colors text-sm sm:text-base"
               >
-                {applying ? 'Applying...' : 'Apply'}
+                {isCheckingProfile ? 'Checking...' : applying ? 'Applying...' : 'Apply'}
               </button>
             )}
             {tuition.tutor_id && (
